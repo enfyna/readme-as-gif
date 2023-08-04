@@ -19,7 +19,7 @@ def arkanoid():
     height = int(request.args.get('height', 190))
 
     bg_color = int(request.args.get('bg_color', "0x000000"), base=16)
-    font_color = int(request.args.get('font_color', "0x00ff00"), base=16)
+    font_color = int(request.args.get('font_color', "0xffffff"), base=16)
 
     paddle_color = int(request.args.get('paddle_color', "0xffffff"), base=16)
     ball_color = int(request.args.get('ball_color', "0xffffff"), base=16)
@@ -73,25 +73,29 @@ def arkanoid():
     floor_height = height - (paddle_width * 3 / 2)
 
     # Ball Properties
-    ball_size = int(request.args.get('ball_size', 15))
+    ball_size = min(5,int(request.args.get('ball_size', 15)))
     ball_pos_x = (width + random() * width) / 3  
     ball_pos_y = floor_height - ball_size
 
     ball_start_pos_x = ball_pos_x
     ball_start_pos_y = ball_pos_y
 
-    ball_speed = int(request.args.get('speed', 7))
+    ball_speed = min(1,int(request.args.get('speed', 7)))
 
     ball_v_speed = -ball_speed
     ball_h_speed = ball_speed if random() < 0.5 else -ball_speed
 
     # Loop
-    jump_count = int(request.args.get('jump', 3))
+    jump_count = min(1,int(request.args.get('jump', 3)))
     current_jump_count = 0
 
     end_loop = False
 
     while True:
+
+        if end_loop:
+            break
+
         frame = img.copy()
         draw = ImageDraw.Draw(frame)
 
@@ -100,9 +104,6 @@ def arkanoid():
         paddle_start = (2 * ball_pos_x + ball_size - paddle_length) / 2
         paddle_start = min(width-paddle_length, max(0, paddle_start))
         draw.line((paddle_start, height-paddle_width, paddle_start+paddle_length, height-paddle_width),paddle_color,paddle_width)
-
-        if end_loop:
-            break
 
         ball_pos_y += ball_v_speed
         if ball_pos_y + ball_v_speed < 0:
@@ -137,6 +138,10 @@ def arkanoid():
     # pr.dump_stats("bench.dmp")
 
     return Response(buffer.getvalue(), mimetype="image/gif")
+
+@app.route('/')
+def index():
+    return "'/arkanoid' copy this and paste it at the end of this URL. :)"
 
 # if __name__ == '__main__':
 #     app.run(debug=True)
