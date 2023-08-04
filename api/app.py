@@ -8,7 +8,7 @@ from random import random
 app = Flask(__name__)
 
 # Loading font takes time so just make this a global for faster access
-fnt = ImageFont.truetype("venv/font/ModernDOS8x16.ttf", 24)
+fnt = ImageFont.truetype("api/font/ModernDOS8x16.ttf", 24)
 
 @app.route('/arkanoid', methods=['GET'])
 def arkanoid():
@@ -138,5 +138,5 @@ def arkanoid():
 
     return Response(buffer.getvalue(), mimetype="image/gif")
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
