@@ -41,7 +41,11 @@ After you have made your [customizations](#customization) copy the full URL and 
 	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/0f39f4b5-b4d2-4450-bf9e-43df0e6c9d70" />
 </p>
 
+<p align="center">
+	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/2125a0e2-6746-4fcb-b66c-29d2db68b4a6" />
+</p>
 You can create personalized Arkanoid GIFs by providing the query parameters in the URL.
+
 
 ### Text Customizations
 
@@ -109,11 +113,15 @@ Some parameters to customize the game. Changing these could change the response 
 
 > Note : On windows it should be : venv\bin\activate.bat
 
-4. Run it : 
+4. Export app.py location for flask:
+
+		export FLASK_APP=api/app.py
+
+5. Run it : 
 
 		flask run
 
-5. Open your browser and enter this URL:
+6. Open your browser and enter this URL:
 
 		http://127.0.0.1:5000/arkanoid
 
