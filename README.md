@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/4461d5ed-5d51-45e0-8be9-35dfcf2b43e1" />
+	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/18b304e9-fd04-47d0-8199-e079d393575e" />
 </p>
 
 <p align="center">
@@ -38,7 +38,7 @@ After you have made your [customizations](#customization) copy the full URL and 
 # Customization
 
 <p align="center">
-	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/5b9926c0-3fe3-4d53-a245-608fb63d0a73" />
+	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/0f39f4b5-b4d2-4450-bf9e-43df0e6c9d70" />
 </p>
 
 You can create personalized Arkanoid GIFs by providing the query parameters in the URL.
