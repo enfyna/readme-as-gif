@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-	<!-- <img src="https://arkanoid-github-readme.vercel.app/arkanoid?speed=10&delta=24" /> -->
+	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/4461d5ed-5d51-45e0-8be9-35dfcf2b43e1" />
 </p>
 
 <p align="center">
