@@ -12,136 +12,158 @@ fnt = ImageFont.truetype("api/font/ModernDOS8x16.ttf", 24)
 
 @app.route('/arkanoid', methods=['GET'])
 def arkanoid():
-    # pr = cProfile.Profile()
-    # pr.enable()
+	# pr = cProfile.Profile()
+	# pr.enable()
 
-    width = int(request.args.get('width', 600))
-    height = int(request.args.get('height', 190))
+	width = int(request.args.get('width', 600))
+	height = int(request.args.get('height', 190))
 
-    bg_color = int(request.args.get('bg_color', "0x000000"), base=16)
-    font_color = int(request.args.get('font_color', "0xffffff"), base=16)
+	bg_color = int(request.args.get('bg_color', "0x000000"), base=16)
+	font_color = int(request.args.get('font_color', "0xffffff"), base=16)
 
-    paddle_color = int(request.args.get('paddle_color', "0xffffff"), base=16)
-    ball_color = int(request.args.get('ball_color', "0xffffff"), base=16)
+	paddle_color = int(request.args.get('paddle_color', "0xffffff"), base=16)
+	ball_color = int(request.args.get('ball_color', "0xffffff"), base=16)
 
-    delta = int(request.args.get('delta', 24))
+	delta = int(request.args.get('delta', 24))
 
-    img = Image.new('RGB', (width, height), bg_color)
+	img = Image.new('RGB', (width, height), bg_color)
 
-    frames = []
+	frames = []
 
-    # Create text
-    text = ""
+	# Create text
+	text = ""
 
-    arg_keys = request.args.keys()
+	arg_keys = request.args.keys()
 
-    if 'name' in arg_keys:
-        name = str(request.args.get('name'))
-        text = "\n".join((text, f"Hi! I am {name}."))
+	if 'name' in arg_keys:
+		name = str(request.args.get('name'))
+		text = "\n".join((text, f"Hi! I am {name}."))
 
-    if 'country' in arg_keys and 'job' in arg_keys:
-        country = str(request.args.get('country'))
-        job = str(request.args.get('job'))
-        text = "\n".join((text, f"A passionate {job} from {country.capitalize()}."))
+	if 'country' in arg_keys and 'job' in arg_keys:
+		country = str(request.args.get('country'))
+		job = str(request.args.get('job'))
+		text = "\n".join((text, f"A passionate {job} from {country.capitalize()}."))
 
-    if 'project' in arg_keys:
-        project = str(request.args.get('project'))
-        text = "\n".join((text, f"I’m currently working on a {project}."))
+	if 'project' in arg_keys:
+		project = str(request.args.get('project'))
+		text = "\n".join((text, f"I’m currently working on a {project}."))
 
-    if 'learning' in arg_keys:
-        learning = str(request.args.get('learning'))
-        text = "\n".join((text, f"I’m currently learning {learning}."))
+	if 'learning' in arg_keys:
+		learning = str(request.args.get('learning'))
+		text = "\n".join((text, f"I’m currently learning {learning}."))
 
-    if 'askme' in arg_keys:
-        askme = str(request.args.get('askme'))
-        text = "\n".join((text, f"Ask me about {askme}."))
+	if 'askme' in arg_keys:
+		askme = str(request.args.get('askme'))
+		text = "\n".join((text, f"Ask me about {askme}."))
 
-    if 'funfact' in arg_keys:
-        funfact = str(request.args.get('funfact'))
-        text = "\n".join((text, f"Fun fact {funfact}."))
+	if 'funfact' in arg_keys:
+		funfact = str(request.args.get('funfact'))
+		text = "\n".join((text, f"Fun fact {funfact}."))
 
-    if len(text) > 0:
-        text = text.removeprefix("\n")
-        
-        ImageDraw.Draw(img).text((10,10),text,font_color,fnt,spacing=10)
+	if len(text) > 0:
+		text = text.removeprefix("\n")
 
-    # Line Properties
-    paddle_length = 100
-    paddle_width = 10
-    paddle_start = (width / 2) - paddle_length
+		ImageDraw.Draw(img).text((10,10),text,font_color,fnt,spacing=10)
 
-    floor_height = height - (paddle_width * 3 / 2)
+	# Line Properties
+	paddle_length = 100
+	paddle_width = 10
+	paddle_start = (width / 2) - paddle_length
 
-    # Ball Properties
-    ball_size = max(5,int(request.args.get('ball_size', 15)))
-    ball_pos_x = (width + random() * width) / 3  
-    ball_pos_y = floor_height - ball_size
+	floor_height = height - (paddle_width * 3 / 2)
 
-    ball_start_pos_x = ball_pos_x
-    ball_start_pos_y = ball_pos_y
+	# Ball Properties
+	ball_size = max(5,int(request.args.get('ball_size', 15)))
+	ball_pos_x = (width + random() * width) / 3
+	ball_pos_y = floor_height - ball_size
 
-    ball_speed = max(1,int(request.args.get('speed', 7)))
+	ball_start_pos_x = ball_pos_x
+	ball_start_pos_y = ball_pos_y
 
-    ball_v_speed = -ball_speed
-    ball_h_speed = ball_speed if random() < 0.5 else -ball_speed
+	ball_speed = max(1,int(request.args.get('speed', 7)))
 
-    # Loop
-    jump_count = max(1,int(request.args.get('jump', 3)))
-    current_jump_count = 0
+	ball_v_speed = -ball_speed
+	ball_h_speed = ball_speed if random() < 0.5 else -ball_speed
 
-    end_loop = False
+	ball_start_direction = 1 if ball_h_speed > 0 else -1
 
-    while True:
+	# Loop
+	jump_count = max(1,int(request.args.get('jump', 3)))
+	current_jump_count = 0
 
-        if end_loop:
-            break
+	end_loop = False
 
-        frame = img.copy()
-        draw = ImageDraw.Draw(frame)
+	while True:
 
-        draw.ellipse((ball_pos_x, ball_pos_y, ball_pos_x+ball_size, ball_pos_y+ball_size),ball_color)
+		if end_loop:
+			break
 
-        paddle_start = (2 * ball_pos_x + ball_size - paddle_length) / 2
-        paddle_start = min(width-paddle_length, max(0, paddle_start))
-        draw.line((paddle_start, height-paddle_width, paddle_start+paddle_length, height-paddle_width),paddle_color,paddle_width)
+		frame = img.copy()
+		draw = ImageDraw.Draw(frame)
 
-        ball_pos_y += ball_v_speed
-        if ball_pos_y + ball_v_speed < 0:
-            ball_v_speed *= -1
-        elif ball_pos_y + ball_v_speed > floor_height - ball_size:
-            ball_v_speed *= -1
-            current_jump_count += 1
-            if current_jump_count == jump_count - 1:
-                ball_h_speed = -(ball_start_pos_x - ball_pos_x) / (floor_height * 2 / ball_v_speed)
-            elif current_jump_count == jump_count:
-                end_loop = True
+		draw.ellipse((ball_pos_x, ball_pos_y, ball_pos_x+ball_size, ball_pos_y+ball_size),ball_color)
 
-        ball_pos_x += ball_h_speed
-        if ball_pos_x + ball_h_speed < 0 or ball_pos_x + ball_h_speed > width - ball_size:
-            ball_h_speed *= -1
-        
-        frames.append(frame)
+		paddle_start = (2 * ball_pos_x + ball_size - paddle_length) / 2
+		paddle_start = min(width-paddle_length, max(0, paddle_start))
+		draw.line((paddle_start, height-paddle_width, paddle_start+paddle_length, height-paddle_width),paddle_color,paddle_width)
 
-    buffer = BytesIO()
-    frames[0].save(
-        buffer,
-        format="GIF",
-        save_all=True,
-        append_images=frames,
-        optimize=True,
-        duration=delta,
-        loop=0, # infinite loop
-    )
+		ball_pos_y += ball_v_speed
+		if ball_pos_y + ball_v_speed < 0:
+			ball_v_speed *= -1
 
-    # print("new bench.dmp dropped")
-    # pr.disable()
-    # pr.dump_stats("bench.dmp")
+		elif ball_pos_y + ball_v_speed > floor_height - ball_size:
+			ball_v_speed *= -1
+			current_jump_count += 1
 
-    return Response(buffer.getvalue(), mimetype="image/gif")
+			if current_jump_count == jump_count - 2:
+				# We will make sure that the ball will always
+				# approach the starting point from the opposite direction
+				# on the last jump to end the loop
+
+				jump_time = (floor_height * 2) / ball_v_speed
+
+				if ball_start_direction > 0:
+					if ball_pos_x > ball_start_pos_x - (width / 4):
+						distance = -((width - (ball_start_pos_x - (width / 4))) * 2 + (width / 2))
+					else:
+						distance = (ball_start_pos_x - (width / 4)) - ball_pos_x
+				else:
+					if ball_pos_x > ball_start_pos_x - (width / 4):
+						distance = ball_pos_x - (ball_start_pos_x - (width / 4))
+					else:
+						distance = (((ball_start_pos_x - (width / 4)) - width) * 2 + (width / 2))
+
+				ball_h_speed = distance / jump_time
+
+			elif current_jump_count == jump_count - 1:
+				ball_h_speed = -(ball_start_pos_x - ball_pos_x) / (floor_height * 2 / ball_v_speed)
+
+			elif current_jump_count == jump_count:
+				end_loop = True
+
+		ball_pos_x += ball_h_speed
+		if ball_pos_x + ball_h_speed < 0 or ball_pos_x + ball_h_speed > width - ball_size:
+			ball_h_speed *= -1
+
+		frames.append(frame)
+
+	buffer = BytesIO()
+	frames[0].save(
+		buffer,
+		format="GIF",
+		save_all=True,
+		append_images=frames,
+		optimize=True,
+		duration=delta,
+		loop=0, # infinite loop
+	)
+
+	# print("new bench.dmp dropped")
+	# pr.disable()
+	# pr.dump_stats("bench.dmp")
+
+	return Response(buffer.getvalue(), mimetype="image/gif")
 
 @app.route('/')
 def index():
-    return "'/arkanoid' copy this and paste it at the end of this URL. :)"
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
+	return "/arkanoid  <- copy this and paste it at the end of this URL. :)"

@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-	<img src="https://arkanoid-github-readme.vercel.app/arkanoid?speed=10&delta=48" />
+	<!-- <img src="https://arkanoid-github-readme.vercel.app/arkanoid?speed=10&delta=24" /> -->
 </p>
 
 <p align="center">
@@ -18,27 +18,22 @@ The Arkanoid GIF Generator is a web application that creates personalized Arkano
 
 # Getting Started
 
+> ***Note*** : This method is very easy but every time you open your readme this API will generate a GIF from scratch so the response time is a bit slow and if you want do a lot of customizations the API response time will increase more. And vercel has limits so for example if you want a bigger window you could hit the limit. Because of this I recommend [building](#building) this repo on your computer and after you generated your GIF save it to your computer add it to your readme as a normal GIF.
+
 To use the Arkanoid GIF Generator, simply access the website at:
 
 	https://arkanoid-github-readme.vercel.app/arkanoid
 
 Once you are on the website, you will see a very basic black and white arkanoid game playing.
-
-To use this in your readme you have 2 options.
-
-Option 1:
-
-	![](https://arkanoid-github-readme.vercel.app/arkanoid)
-
-Simply copy and paste this in your readme. The GIF will be left aligned.
-
-Option 2:
+After you have made your [customizations](#customization) copy the full URL and embed it as an image in your README.md like this:
 
 	<p align="center">
 		<img src="https://arkanoid-github-readme.vercel.app/arkanoid" />
 	</p>
 
-When you paste this pay attention to the colorization and spacing of your code to ensure the tags are colored. If the HTML tags are not colored correctly you may need to adjust your spacing. But if you setup this correctly you can select how the GIF will be aligned.
+> Note : When you paste this pay attention to the colorization and spacing of your code to ensure the tags are colored. If the HTML tags are not colored correctly you need to adjust your spacing.
+
+<br>
 
 # Customization
 
@@ -97,6 +92,26 @@ Some parameters to customize the game. Changing these could change the response 
 
 
 <br>
+
+# Building
+
+1. Clone this repo to your computer. You can use github CLI or just download it as a zip.
+
+2. If you used CLI cd to the destination folder. If you downloaded it as a zip extract it in a folder and open the folder that you extracted to and with right click select "open terminal here". 
+
+3. Activate python venv by sourcing it:
+
+		. venv/bin/activate
+
+> Note : On windows it should be : venv\bin\activate.bat
+
+4. Run it : 
+
+		flask run
+
+5. Open your browser and enter this URL:
+
+		http://127.0.0.1:5000/arkanoid
 
 
 # Contributing
