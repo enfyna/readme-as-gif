@@ -115,27 +115,27 @@ def arkanoid():
 			ball_v_speed *= -1
 			current_jump_count += 1
 
-			if current_jump_count == jump_count - 2:
-				# We will make sure that the ball will always
-				# approach the starting point from the opposite direction
-				# on the last jump to end the loop
+			# if current_jump_count == jump_count - 2:
+			# 	# We will make sure that the ball will always
+			# 	# approach the starting point from the opposite direction
+			# 	# on the last jump to end the loop
 
-				jump_time = (floor_height * 2) / ball_v_speed
+			# 	jump_time = (floor_height * 2) / ball_v_speed
 
-				if ball_start_direction > 0:
-					if ball_pos_x > ball_start_pos_x - (width / 4):
-						distance = -((width - (ball_start_pos_x - (width / 4))) * 2 + (width / 2))
-					else:
-						distance = (ball_start_pos_x - (width / 4)) - ball_pos_x
-				else:
-					if ball_pos_x > ball_start_pos_x - (width / 4):
-						distance = ball_pos_x - (ball_start_pos_x - (width / 4))
-					else:
-						distance = (((ball_start_pos_x - (width / 4)) - width) * 2 + (width / 2))
+			# 	if ball_start_direction > 0:
+			# 		if ball_pos_x > ball_start_pos_x - (width / 4):
+			# 			distance = -((width - (ball_start_pos_x - (width / 4))) * 2 + (width / 2))
+			# 		else:
+			# 			distance = (ball_start_pos_x - (width / 4)) - ball_pos_x
+			# 	else:
+			# 		if ball_pos_x > ball_start_pos_x - (width / 4):
+			# 			distance = ball_pos_x - (ball_start_pos_x - (width / 4))
+			# 		else:
+			# 			distance = (((ball_start_pos_x - (width / 4)) - width) * 2 + (width / 2))
 
-				ball_h_speed = distance / jump_time
+			# 	ball_h_speed = distance / jump_time
 
-			elif current_jump_count == jump_count - 1:
+			if current_jump_count == jump_count - 1:
 				ball_h_speed = -(ball_start_pos_x - ball_pos_x) / (floor_height * 2 / ball_v_speed)
 
 			elif current_jump_count == jump_count:
