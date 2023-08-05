@@ -37,6 +37,10 @@ After you have made your [customizations](#customization) copy the full URL and 
 
 # Customization
 
+<p align="center">
+	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/5b9926c0-3fe3-4d53-a245-608fb63d0a73" />
+</p>
+
 You can create personalized Arkanoid GIFs by providing the query parameters in the URL.
 
 ### Text Customizations
