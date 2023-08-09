@@ -105,23 +105,31 @@ Some parameters to customize the game. Changing these could change the response 
 
 1. Clone this repo to your computer. You can use github CLI or just download it as a zip.
 
-2. If you used CLI cd to the destination folder. If you downloaded it as a zip extract it in a folder and open the folder that you extracted to and with right click select "open terminal here". 
+2. If you used CLI 'cd' to the destination folder. If you downloaded it as a zip extract it in a folder and open the folder that you extracted to and with right click select "open terminal here". 
 
-3. Activate python venv by sourcing it:
+3. Create python virtual environment:
+
+		python -m venv venv
+
+4. Activate python venv by sourcing it:
 
 		. venv/bin/activate
 
 > Note : On windows it should be : venv\bin\activate.bat
 
-4. Export app.py location for flask:
+5. Install requirements:
+
+		pip install -r requirements.txt
+
+6. Export app.py location for flask:
 
 		export FLASK_APP=api/app.py
 
-5. Run it : 
+7. Run it : 
 
 		flask run
 
-6. Open your browser and enter this URL:
+8. Open your browser and enter this URL:
 
 		http://127.0.0.1:5000/arkanoid
 
