@@ -1,6 +1,7 @@
 from flask import Flask, request, Response
 from PIL import Image, ImageDraw, ImageFont
 
+from math import ceil
 from io import BytesIO
 from random import random
 from os.path import isfile
@@ -51,11 +52,10 @@ def arkanoid():
 		ratio = i_w / i_h
 		new_height = min(height - 20, width // 2)
 		new_width = int(ratio * new_height)
-		
+
 		icon = icon.resize((new_width, new_height))
 
 		img.paste(icon, (width-icon.width-10, height-icon.height-10), icon)
-
 
 	# Create text
 	text = ""
@@ -134,6 +134,8 @@ def arkanoid():
 		paddle_start = min(width-paddle_length, max(0, paddle_start))
 		draw.line((paddle_start, height-paddle_width, paddle_start+paddle_length, height-paddle_width),paddle_color,paddle_width)
 
+		frames.append(frame)
+
 		ball_pos_y += ball_v_speed
 		if ball_pos_y + ball_v_speed < 0:
 			ball_v_speed *= -1
@@ -142,28 +144,9 @@ def arkanoid():
 			ball_v_speed *= -1
 			current_jump_count += 1
 
-			# if current_jump_count == jump_count - 2:
-			# 	# We will make sure that the ball will always
-			# 	# approach the starting point from the opposite direction
-			# 	# on the last jump to end the loop
-
-			# 	jump_time = (floor_height * 2) / ball_v_speed
-
-			# 	if ball_start_direction > 0:
-			# 		if ball_pos_x > ball_start_pos_x - (width / 4):
-			# 			distance = -((width - (ball_start_pos_x - (width / 4))) * 2 + (width / 2))
-			# 		else:
-			# 			distance = (ball_start_pos_x - (width / 4)) - ball_pos_x
-			# 	else:
-			# 		if ball_pos_x > ball_start_pos_x - (width / 4):
-			# 			distance = ball_pos_x - (ball_start_pos_x - (width / 4))
-			# 		else:
-			# 			distance = (((ball_start_pos_x - (width / 4)) - width) * 2 + (width / 2))
-
-			# 	ball_h_speed = distance / jump_time
-
 			if current_jump_count == jump_count - 1:
-				ball_h_speed = -(ball_start_pos_x - ball_pos_x) / (floor_height * 2 / ball_v_speed)
+				# Make sure the ball always gets to the starting point on last jump
+				ball_h_speed = (ball_start_pos_x - ball_pos_x) / ((floor_height-ball_size) * 2 / abs(ball_v_speed))
 
 			elif current_jump_count == jump_count:
 				end_loop = True
@@ -172,7 +155,6 @@ def arkanoid():
 		if ball_pos_x + ball_h_speed < 0 or ball_pos_x + ball_h_speed > width - ball_size:
 			ball_h_speed *= -1
 
-		frames.append(frame)
 
 	buffer = BytesIO()
 	frames[0].save(
