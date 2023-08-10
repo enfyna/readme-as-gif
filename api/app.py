@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from io import BytesIO
 from random import random
+from os.path import isfile
 # import cProfile
 
 app = Flask(__name__)
@@ -28,12 +29,36 @@ def arkanoid():
 
 	img = Image.new('RGB', (width, height), bg_color)
 
-	frames = []
+	arg_keys = request.args.keys()
+
+	if 'icon' in arg_keys:
+		icon_path = f"api/icons/{request.args.get('icon')}.png"
+		if not isfile(icon_path):
+			return Response("Icon file not found", status=404)
+		icon = Image.open(icon_path)
+
+		if icon.mode != 'RGBA':
+			icon = icon.convert('RGBA')
+
+		if 'icon_opacity' in arg_keys:
+			icon_opacity = float(request.args.get('icon_opacity'))
+		else:
+			icon_opacity = 0.5
+
+		icon = Image.blend(icon, Image.new('RGBA', icon.size, bg_color), 1 - icon_opacity)
+
+		i_w, i_h = icon.size
+		ratio = i_w / i_h
+		new_height = min(height - 20, width // 2)
+		new_width = int(ratio * new_height)
+		
+		icon = icon.resize((new_width, new_height))
+
+		img.paste(icon, (width-icon.width-10, height-icon.height-10), icon)
+
 
 	# Create text
 	text = ""
-
-	arg_keys = request.args.keys()
 
 	if 'name' in arg_keys:
 		name = str(request.args.get('name'))
@@ -92,6 +117,8 @@ def arkanoid():
 	current_jump_count = 0
 
 	end_loop = False
+
+	frames = []
 
 	while True:
 
