@@ -1,7 +1,6 @@
 from flask import Flask, request, Response
 from PIL import Image, ImageDraw, ImageFont
 
-from math import ceil
 from io import BytesIO
 from random import random
 from os.path import isfile
@@ -139,12 +138,17 @@ def arkanoid():
 		ball_pos_y += ball_v_speed
 		if ball_pos_y + ball_v_speed < 0:
 			ball_v_speed *= -1
+			if not current_jump_count == jump_count - 1:
+				ball_h_speed += random() * (ball_speed // 2) - (ball_speed // 2)
 
 		elif ball_pos_y + ball_v_speed > floor_height - ball_size:
 			ball_v_speed *= -1
 			current_jump_count += 1
 
-			if current_jump_count == jump_count - 1:
+			if current_jump_count < jump_count - 1:
+				ball_h_speed += random() * (ball_speed // 2) - (ball_speed // 2)
+
+			elif current_jump_count == jump_count - 1:
 				# Make sure the ball always gets to the starting point on last jump
 				ball_h_speed = (ball_start_pos_x - ball_pos_x) / ((floor_height-ball_size) * 2 / abs(ball_v_speed))
 
