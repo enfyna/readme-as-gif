@@ -31,31 +31,35 @@ def arkanoid():
 
 	arg_keys = request.args.keys()
 
-	if 'icon' in arg_keys:
-		icon_path = f"api/icons/{request.args.get('icon')}.png"
-		if not isfile(icon_path):
-			return Response("Icon file not found", status=404)
-		icon = Image.open(icon_path)
+	right = 0
+	for i, key in enumerate(['icon','icon2','icon3']):
+		right += 10
+		if key in arg_keys:
+			icon_path = f"api/icons/{request.args.get(key)}.png"
+			if not isfile(icon_path):
+				return Response("Icon file not found", status=404)
+			icon = Image.open(icon_path)
 
-		if icon.mode != 'RGBA':
-			icon = icon.convert('RGBA')
+			if icon.mode != 'RGBA':
+				icon = icon.convert('RGBA')
 
-		if 'icon_opacity' in arg_keys:
-			icon_opacity = float(request.args.get('icon_opacity'))
-		else:
-			icon_opacity = 0.5
+			if 'icon_opacity' in arg_keys:
+				icon_opacity = float(request.args.get('icon_opacity'))
+			else:
+				icon_opacity = 0.5
 
-		icon = Image.blend(icon, Image.new('RGBA', icon.size, bg_color), 1 - icon_opacity)
+			icon = Image.blend(icon, Image.new('RGBA', icon.size, bg_color), 1 - icon_opacity)
 
-		i_w, i_h = icon.size
-		ratio = i_w / i_h
-		new_height = min(height - 20, width // 2)
-		new_width = int(ratio * new_height)
+			i_w, i_h = icon.size
+			ratio = i_h / i_w
+			new_width = min(height - 20, width // 2 - 20) // min(2, i + 1)
+			new_height = int(ratio * new_width)
 
-		icon = icon.resize((new_width, new_height))
-
-		img.paste(icon, (width-icon.width-10, height-icon.height-10), icon)
-
+			icon = icon.resize((new_width, new_height))
+			
+			right += icon.width
+			img.paste(icon, (width-right, height-icon.height-10), icon)
+			
 	# Create text
 	text = ""
 
