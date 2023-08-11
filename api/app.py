@@ -97,7 +97,7 @@ def arkanoid():
 	floor_height = height - (paddle_width * 3 / 2)
 
 	# Ball Properties
-	ball_size = max(5,int(request.args.get('ball_size', 15)))
+	ball_size = min(floor_height-10, max(5, int(request.args.get('ball_size', 15))))
 	ball_pos_x = (width + random() * width) / 3
 	ball_pos_y = floor_height - ball_size
 
@@ -139,14 +139,14 @@ def arkanoid():
 		if ball_pos_y + ball_v_speed < 0:
 			ball_v_speed *= -1
 			if not current_jump_count == jump_count - 1:
-				ball_h_speed += random() * (ball_speed // 2) - (ball_speed // 2)
+				ball_h_speed += random() * (ball_speed / 2) - (ball_speed / 2)
 
 		elif ball_pos_y + ball_v_speed > floor_height - ball_size:
 			ball_v_speed *= -1
 			current_jump_count += 1
 
 			if current_jump_count < jump_count - 1:
-				ball_h_speed += random() * (ball_speed // 2) - (ball_speed // 2)
+				ball_h_speed += random() * (ball_speed / 2) - (ball_speed / 2)
 
 			elif current_jump_count == jump_count - 1:
 				# Make sure the ball always gets to the starting point on last jump
