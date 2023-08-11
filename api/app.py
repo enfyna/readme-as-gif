@@ -11,42 +11,34 @@ app = Flask(__name__)
 # Loading font takes time so just make this a global for faster access
 fnt = ImageFont.truetype("api/font/ModernDOS8x16.ttf", 24)
 
-@app.route('/arkanoid', methods=['GET'])
-def arkanoid():
-	# pr = cProfile.Profile()
-	# pr.enable()
+def drawbanner(args) -> Image.Image:
+	width = int(args.get('width', 600))
+	height = int(args.get('height', 190))
 
-	width = int(request.args.get('width', 600))
-	height = int(request.args.get('height', 190))
-
-	bg_color = int(request.args.get('bg_color', "0x000000"), base=16)
-	font_color = int(request.args.get('font_color', "0xffffff"), base=16)
-
-	paddle_color = int(request.args.get('paddle_color', "0xffffff"), base=16)
-	ball_color = int(request.args.get('ball_color', "0xffffff"), base=16)
-
-	delta = int(request.args.get('delta', 24))
+	bg_color = int(args.get('bg_color', "0x000000"), base=16)
+	font_color = int(args.get('font_color', "0xffffff"), base=16)
 
 	img = Image.new('RGB', (width, height), bg_color)
 
-	arg_keys = request.args.keys()
+	arg_keys = args.keys()
+
+	if 'icon_opacity' in arg_keys:
+		icon_opacity = float(args.get('icon_opacity'))
+	else:
+		icon_opacity = 0.5
 
 	right = 0
 	for i, key in enumerate(['icon','icon2','icon3']):
 		right += 10
 		if key in arg_keys:
-			icon_path = f"api/icons/{request.args.get(key)}.png"
+			icon_path = f"api/icons/{args.get(key)}.png"
 			if not isfile(icon_path):
 				return Response("Icon file not found", status=404)
+
 			icon = Image.open(icon_path)
 
 			if icon.mode != 'RGBA':
 				icon = icon.convert('RGBA')
-
-			if 'icon_opacity' in arg_keys:
-				icon_opacity = float(request.args.get('icon_opacity'))
-			else:
-				icon_opacity = 0.5
 
 			icon = Image.blend(icon, Image.new('RGBA', icon.size, bg_color), 1 - icon_opacity)
 
@@ -56,42 +48,73 @@ def arkanoid():
 			new_height = int(ratio * new_width)
 
 			icon = icon.resize((new_width, new_height))
-			
+
 			right += icon.width
 			img.paste(icon, (width-right, height-icon.height-10), icon)
-			
+
 	# Create text
 	text = ""
 
 	if 'name' in arg_keys:
-		name = str(request.args.get('name'))
+		name = str(args.get('name'))
 		text = "\n".join((text, f"Hi! I am {name}."))
 
 	if 'country' in arg_keys and 'job' in arg_keys:
-		country = str(request.args.get('country'))
-		job = str(request.args.get('job'))
+		country = str(args.get('country'))
+		job = str(args.get('job'))
 		text = "\n".join((text, f"A passionate {job} from {country.capitalize()}."))
 
 	if 'project' in arg_keys:
-		project = str(request.args.get('project'))
+		project = str(args.get('project'))
 		text = "\n".join((text, f"I’m currently working on a {project}."))
 
 	if 'learning' in arg_keys:
-		learning = str(request.args.get('learning'))
+		learning = str(args.get('learning'))
 		text = "\n".join((text, f"I’m currently learning {learning}."))
 
 	if 'askme' in arg_keys:
-		askme = str(request.args.get('askme'))
+		askme = str(args.get('askme'))
 		text = "\n".join((text, f"Ask me about {askme}."))
 
 	if 'funfact' in arg_keys:
-		funfact = str(request.args.get('funfact'))
+		funfact = str(args.get('funfact'))
 		text = "\n".join((text, f"Fun fact {funfact}."))
 
 	if len(text) > 0:
 		text = text.removeprefix("\n")
 
 		ImageDraw.Draw(img).text((10,10),text,font_color,fnt,spacing=10)
+
+	return img
+
+@app.route('/api/base', methods=['GET'])
+def base():
+
+	img = drawbanner(request.args)
+
+	buffer = BytesIO()
+	img.save(
+		buffer,
+		format="PNG",
+	)
+
+	return Response(buffer.getvalue(), mimetype="image/png")
+
+
+@app.route('/api/arkanoid', methods=['GET'])
+def arkanoid():
+	# pr = cProfile.Profile()
+	# pr.enable()
+
+	width = int(request.args.get('width', 600))
+	height = int(request.args.get('height', 190))
+
+	img = drawbanner(request.args)
+
+	paddle_color = int(request.args.get('paddle_color', "0xffffff"), base=16)
+	ball_color = int(request.args.get('ball_color', "0xffffff"), base=16)
+
+	delta = int(request.args.get('delta', 24))
 
 	# Line Properties
 	paddle_length = 100
@@ -183,4 +206,4 @@ def arkanoid():
 
 @app.route('/')
 def index():
-	return "/arkanoid  <- copy this and paste it at the end of this URL. :)"
+	return "/api/base  <- copy this and paste it at the end of this URL. :)"
