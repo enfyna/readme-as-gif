@@ -100,7 +100,6 @@ def base():
 
 	return Response(buffer.getvalue(), mimetype="image/png")
 
-
 @app.route('/api/arkanoid', methods=['GET'])
 def arkanoid():
 	# pr = cProfile.Profile()
@@ -201,6 +200,104 @@ def arkanoid():
 	# print("new bench.dmp dropped")
 	# pr.disable()
 	# pr.dump_stats("bench.dmp")
+
+	return Response(buffer.getvalue(), mimetype="image/gif")
+
+@app.route('/api/dino', methods=['GET'])
+def dino():
+
+	img = drawbanner(request.args)
+
+	width = int(request.args.get('width', 600))
+	height = int(request.args.get('height', 190))
+
+	delta = int(request.args.get('delta', 24))
+
+	dino = Image.open('api/dino/dino.png')
+
+	i_w, i_h = dino.size
+	ratio = i_h / i_w
+	new_height = max(height // 4, 40)
+	new_width = int(ratio * new_height)
+
+	dino = dino.resize((new_width, new_height))
+
+	dino_pos_x = width // 2 #-dino.width
+	dino_pos_y = int(height - (dino.height + 5) * 2)
+	dino_start_y = dino_pos_y
+
+	cactus = Image.open('api/dino/cactus.png')
+
+	i_w, i_h = cactus.size
+	ratio = i_h / i_w
+	#new_height = use dino height
+	new_width = int(ratio * new_height)
+
+	cactus = cactus.resize((new_width, new_height))
+
+	speed = int(request.args.get('speed', 5))
+
+	c_dist = cactus.width * 5 # distance between cactuses
+	c_dist += c_dist % speed # align with speed
+
+	y = height - cactus.height
+
+	cactusses = []
+	for i in range(0,width // (c_dist * 2) + 2):
+		cactusses.append([(i * c_dist) + (width // 2), y])
+		if i == 0:
+			continue
+		cactusses.append([(-i * c_dist) + (width // 2), y])
+
+	total_time = c_dist // speed
+	dino_v_speed =  (dino.height * 3) // total_time
+
+	total_distance_travelled = 0
+
+	frames = []
+
+	end_loop = False
+
+	while True:
+
+		if end_loop:
+			break
+
+		frame = img.copy()
+		draw = ImageDraw.Draw(frame)
+
+		frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
+
+		for c in cactusses:
+			frame.paste(cactus, (int(c[0]), int(c[1])), cactus)
+			c[0] -= speed
+
+		frames.append(frame)
+
+		if total_distance_travelled + speed == c_dist:
+			end_loop = True
+
+		if dino_pos_y + dino.height > height:
+			dino_v_speed *= -1
+		
+		dino_pos_y += dino_v_speed
+
+		if dino_pos_y + dino_v_speed <= dino_start_y:
+			dino_v_speed = dino_start_y - dino_pos_y
+
+		total_distance_travelled += speed
+
+
+	buffer = BytesIO()
+	frames[0].save(
+		buffer,
+		format="GIF",
+		save_all=True,
+		append_images=frames,
+		optimize=True,
+		duration=delta,
+		loop=0, # infinite loop
+	)
 
 	return Response(buffer.getvalue(), mimetype="image/gif")
 
