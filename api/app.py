@@ -11,7 +11,7 @@ app = Flask(__name__)
 # Loading font takes time so just make this a global for faster access
 fnt = ImageFont.truetype("api/font/ModernDOS8x16.ttf", 24)
 
-def drawbanner(args) -> Image.Image:
+def draw_base_image(args) -> Image.Image:
 	width = int(args.get('width', 600))
 	height = int(args.get('height', 190))
 
@@ -90,7 +90,7 @@ def drawbanner(args) -> Image.Image:
 @app.route('/api/base', methods=['GET'])
 def base():
 
-	img = drawbanner(request.args)
+	img = draw_base_image(request.args)
 
 	buffer = BytesIO()
 	img.save(
@@ -108,7 +108,7 @@ def arkanoid():
 	width = int(request.args.get('width', 600))
 	height = int(request.args.get('height', 190))
 
-	img = drawbanner(request.args)
+	img = draw_base_image(request.args)
 
 	paddle_color = int(request.args.get('paddle_color', "0xffffff"), base=16)
 	ball_color = int(request.args.get('ball_color', "0xffffff"), base=16)
@@ -206,7 +206,7 @@ def arkanoid():
 @app.route('/api/dino', methods=['GET'])
 def dino():
 
-	img = drawbanner(request.args)
+	img = draw_base_image(request.args)
 
 	width = int(request.args.get('width', 600))
 	height = int(request.args.get('height', 190))
@@ -216,24 +216,43 @@ def dino():
 	# get dino and cactus, resize them
 	dino = Image.open('api/dino/dino.png')
 	cactus = Image.open('api/dino/cactus.png')
+	floor = Image.open('api/dino/floor.png')
+	cloud = Image.open('api/dino/cloud.png')
+	cloud_small = cloud.copy()
 
 	w, h = dino.size
-	ratio = h / w
+	ratio = w / h
 	new_height = max(height // 4, 40)
 	new_width = int(ratio * new_height)
 
 	dino = dino.resize((new_width, new_height))
 
 	w, h = cactus.size
-	ratio = h / w
+	ratio = w / h
 	# using dino height
 	new_width = int(ratio * new_height)
 
 	cactus = cactus.resize((new_width, new_height))
 
+	w, h = floor.size
+	ratio = w / h
+	new_height = dino.height // 2
+	new_width = int(ratio * new_height)
+	floor_num = width // floor.width + 1
+
+	floor = floor.resize((new_width, new_height))
+
+	w, h = cloud.size
+	ratio = w / h
+	new_height = dino.height // 2
+	new_width = int(ratio * new_height)
+
+	cloud = cloud.resize((new_width, new_height))
+	cloud_small = cloud_small.resize((int(new_width * 0.5), int(new_height * 0.5)))
+
 	# calculate dino speed and position
 	dino_pos_x = width // 2
-	
+
 	dino_start_y = int(height - dino.height - cactus.height - 20)
 	dino_start_y += speed - (dino_start_y % speed) if 0 != dino_start_y % speed else 0 # align with speed
 	dino_pos_y = dino_start_y
@@ -284,6 +303,13 @@ def dino():
 		draw = ImageDraw.Draw(frame)
 
 		frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
+
+		for i in range(floor_num+1):
+			frame.paste(floor, ((i*floor.width)-total_distance_travelled, height - (floor.height//2)), floor)
+		for i in range(-4,5):
+			frame.paste(cloud_small, (width//2 + cloud.width + (i*width//8) - total_distance_travelled//4, int(height // 8)), cloud_small)
+		for i in range(-2,3):
+			frame.paste(cloud, (width//2 + cloud.width + (i*width//4) - total_distance_travelled//2, int(height // 6)), cloud)
 
 		next_cactus_found = False
 		for c in cactusses:
