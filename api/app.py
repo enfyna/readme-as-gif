@@ -210,52 +210,69 @@ def dino():
 
 	width = int(request.args.get('width', 600))
 	height = int(request.args.get('height', 190))
-
 	delta = int(request.args.get('delta', 24))
+	speed = max(2, int(request.args.get('speed', 5)))
 
+	# get dino and cactus, resize them
 	dino = Image.open('api/dino/dino.png')
+	cactus = Image.open('api/dino/cactus.png')
 
-	i_w, i_h = dino.size
-	ratio = i_h / i_w
+	w, h = dino.size
+	ratio = h / w
 	new_height = max(height // 4, 40)
 	new_width = int(ratio * new_height)
 
 	dino = dino.resize((new_width, new_height))
 
-	dino_pos_x = width // 2 #-dino.width
-	dino_pos_y = int(height - (dino.height + 5) * 2)
-	dino_start_y = dino_pos_y
-
-	cactus = Image.open('api/dino/cactus.png')
-
-	i_w, i_h = cactus.size
-	ratio = i_h / i_w
-	#new_height = use dino height
+	w, h = cactus.size
+	ratio = h / w
+	# using dino height
 	new_width = int(ratio * new_height)
 
 	cactus = cactus.resize((new_width, new_height))
 
-	speed = int(request.args.get('speed', 5))
+	# calculate dino speed and position
+	dino_pos_x = width // 2
+	
+	dino_start_y = int(height - dino.height - cactus.height - 20)
+	dino_start_y += speed - (dino_start_y % speed) if 0 != dino_start_y % speed else 0 # align with speed
+	dino_pos_y = dino_start_y
 
-	c_dist = cactus.width * 5 # distance between cactuses
-	c_dist += c_dist % speed # align with speed
+	dino_v_speed = speed
+	dino_v_speed += dino_v_speed - ((dino_start_y) % dino_v_speed) if 0 != (dino_start_y) % dino_v_speed else 0
+	dino_v_speed_current = dino_v_speed
+
+	total_frames_to_climb_cactus = cactus.height + 10 // dino_v_speed
+
+	#calculate cactus positions
+	h_w = width // 2
+	q_w = width // 4
+	o_w = width // 8
+
+	c_dist_1 = min(q_w, max(o_w, int(random() * q_w))) # distance between start point and cactus 1
+	c_dist_1 += speed - (c_dist_1 % speed) if 0 != c_dist_1 % speed else 0 # align with speed
+
+	c_dist_2 = min(h_w, max(q_w + o_w, int((random() * q_w) + h_w))) # distance between cactus 1 and cactus 2
+	c_dist_2 += speed - (c_dist_2 % speed) if 0 != c_dist_2 % speed else 0 # align with speed
 
 	y = height - cactus.height
 
 	cactusses = []
-	for i in range(0,width // (c_dist * 2) + 2):
-		cactusses.append([(i * c_dist) + (width // 2), y])
-		if i == 0:
-			continue
-		cactusses.append([(-i * c_dist) + (width // 2), y])
 
-	total_time = c_dist // speed
-	dino_v_speed =  (dino.height * 3) // total_time
+	cactusses.append([h_w - c_dist_2, y])
+	# cactusses.append([h_w - c_dist_2 + c_dist_1, y])
 
-	total_distance_travelled = 0
+	cactusses.append([h_w, y]) # start point
 
+	# cactusses.append([h_w + c_dist_1, y])
+	cactusses.append([h_w + c_dist_2, y])
+
+	# cactusses.append([h_w + c_dist_2 + c_dist_1, y])
+	cactusses.append([h_w + c_dist_2 + c_dist_2, y])
+
+	# loop variables
 	frames = []
-
+	total_distance_travelled = 0
 	end_loop = False
 
 	while True:
@@ -268,22 +285,30 @@ def dino():
 
 		frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
 
+		next_cactus_found = False
 		for c in cactusses:
 			frame.paste(cactus, (int(c[0]), int(c[1])), cactus)
 			c[0] -= speed
+			if dino_v_speed_current == 0 and dino_pos_y != dino_start_y:
+				if next_cactus_found:
+					continue
+				if c[0] < dino_pos_x:
+					continue
+				next_cactus_found = True
+				if dino_pos_x +dino.width +  total_frames_to_climb_cactus > c[0]:
+					dino_v_speed_current = -dino_v_speed
 
 		frames.append(frame)
 
-		if total_distance_travelled + speed == c_dist:
+		if total_distance_travelled + speed == c_dist_2:
 			end_loop = True
 
-		if dino_pos_y + dino.height > height:
-			dino_v_speed *= -1
-		
-		dino_pos_y += dino_v_speed
+		dino_pos_y += dino_v_speed_current
 
-		if dino_pos_y + dino_v_speed <= dino_start_y:
-			dino_v_speed = dino_start_y - dino_pos_y
+		if dino_pos_y + dino.height >= height:
+			dino_v_speed_current = 0
+		elif dino_pos_y + dino_v_speed_current <= dino_start_y:
+			dino_v_speed_current = 0
 
 		total_distance_travelled += speed
 
