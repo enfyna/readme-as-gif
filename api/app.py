@@ -213,6 +213,8 @@ def dino():
 	delta = int(request.args.get('delta', 24))
 	speed = max(2, int(request.args.get('speed', 5)))
 
+	bg_color = max(2, int(request.args.get('bg_color', '0x000000'),base=16))
+
 	# get dino and cactus, resize them
 	dino = Image.open('api/dino/dino.png')
 	cactus = Image.open('api/dino/cactus.png')
@@ -241,6 +243,11 @@ def dino():
 	floor_num = width // floor.width + 1
 
 	floor = floor.resize((new_width, new_height))
+	quarter_floor = floor.copy() 
+	quarter_floor = quarter_floor.crop((0,0,new_width//4,floor.height))
+	
+	floor = floor.convert('RGBA')
+	floor = Image.blend(floor, Image.new('RGBA', floor.size, bg_color), 0.3)
 
 	w, h = cloud.size
 	ratio = w / h
@@ -304,12 +311,14 @@ def dino():
 
 		frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
 
-		for i in range(floor_num+1):
-			frame.paste(floor, ((i*floor.width)-total_distance_travelled, height - (floor.height//2)), floor)
+		for i in range(0,10):
+			frame.paste(floor, ((i*floor.width) - total_distance_travelled, height - floor.height // 2), floor)
+		for i in range(0,20):
+			frame.paste(quarter_floor, ((i*quarter_floor.width) - total_distance_travelled//2, height * 4 // 5), quarter_floor)
 		for i in range(-4,5):
-			frame.paste(cloud_small, (width//2 + cloud.width + (i*width//8) - total_distance_travelled//4, int(height // 8)), cloud_small)
+			frame.paste(cloud_small, (width//2 + cloud.width + (i*width//8) - total_distance_travelled//4, height // 8), cloud_small)
 		for i in range(-2,3):
-			frame.paste(cloud, (width//2 + cloud.width + (i*width//4) - total_distance_travelled//2, int(height // 6)), cloud)
+			frame.paste(cloud, (width//2 + cloud.width + (i*width//4) - total_distance_travelled//2, height // 6), cloud)
 
 		next_cactus_found = False
 		for c in cactusses:
