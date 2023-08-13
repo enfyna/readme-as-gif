@@ -8,7 +8,6 @@ from os.path import isfile
 
 app = Flask(__name__)
 
-# Loading font takes time so just make this a global for faster access
 fnt = ImageFont.truetype("api/font/ModernDOS8x16.ttf", 24)
 
 def draw_base_image(args) -> Image.Image:
@@ -216,9 +215,12 @@ def dino():
 	bg_color = max(2, int(request.args.get('bg_color', '0x000000'),base=16))
 
 	# get dino and cactus, resize them
-	dino = Image.open('api/dino/dino.png')
+	dino = Image.open('api/dino/dino_base.png')
+	dino_left = Image.open('api/dino/dino_left.png')
+	dino_right = Image.open('api/dino/dino_right.png')
 	cactus = Image.open('api/dino/cactus.png')
 	floor = Image.open('api/dino/floor.png')
+	quarter_floor = floor.copy()
 	cloud = Image.open('api/dino/cloud.png')
 	cloud_small = cloud.copy()
 
@@ -228,6 +230,9 @@ def dino():
 	new_width = int(ratio * new_height)
 
 	dino = dino.resize((new_width, new_height))
+	dino_right = dino_right.resize((new_width, new_height))
+	dino_left = dino_left.resize((new_width, new_height))
+
 
 	w, h = cactus.size
 	ratio = w / h
@@ -235,6 +240,7 @@ def dino():
 	new_width = int(ratio * new_height)
 
 	cactus = cactus.resize((new_width, new_height))
+	cactus.convert('RGBA')
 
 	w, h = floor.size
 	ratio = w / h
@@ -243,9 +249,8 @@ def dino():
 	floor_num = width // floor.width + 1
 
 	floor = floor.resize((new_width, new_height))
-	quarter_floor = floor.copy() 
 	quarter_floor = quarter_floor.crop((0,0,new_width//4,floor.height))
-	
+
 	floor = floor.convert('RGBA')
 	floor = Image.blend(floor, Image.new('RGBA', floor.size, bg_color), 0.3)
 
@@ -284,7 +289,8 @@ def dino():
 	y = height - cactus.height
 
 	cactusses = []
-
+	# second cactus makes things too complicated 
+	# add it later maybe
 	cactusses.append([h_w - c_dist_2, y])
 	# cactusses.append([h_w - c_dist_2 + c_dist_1, y])
 
@@ -309,16 +315,22 @@ def dino():
 		frame = img.copy()
 		draw = ImageDraw.Draw(frame)
 
-		frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
-
 		for i in range(0,10):
 			frame.paste(floor, ((i*floor.width) - total_distance_travelled, height - floor.height // 2), floor)
 		for i in range(0,20):
 			frame.paste(quarter_floor, ((i*quarter_floor.width) - total_distance_travelled//2, height * 4 // 5), quarter_floor)
 		for i in range(-4,5):
-			frame.paste(cloud_small, (width//2 + cloud.width + (i*width//8) - total_distance_travelled//4, height // 8), cloud_small)
+			frame.paste(cloud_small, (h_w + cloud.width + (i*o_w) - total_distance_travelled//4, height // 8), cloud_small)
 		for i in range(-2,3):
-			frame.paste(cloud, (width//2 + cloud.width + (i*width//4) - total_distance_travelled//2, height // 6), cloud)
+			frame.paste(cloud, (h_w + cloud.width + (i*q_w) - total_distance_travelled//2, height // 6), cloud)
+
+		if dino_pos_y == 0:
+			frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
+		else:
+			if total_distance_travelled % 60 < 30:
+				frame.paste(dino_left, (dino_pos_x, dino_pos_y), dino_left)
+			else:
+				frame.paste(dino_right, (dino_pos_x, dino_pos_y), dino_right)
 
 		next_cactus_found = False
 		for c in cactusses:
@@ -330,7 +342,7 @@ def dino():
 				if c[0] < dino_pos_x:
 					continue
 				next_cactus_found = True
-				if dino_pos_x +dino.width +  total_frames_to_climb_cactus > c[0]:
+				if dino_pos_x + dino.width + total_frames_to_climb_cactus > c[0]:
 					dino_v_speed_current = -dino_v_speed
 
 		frames.append(frame)
