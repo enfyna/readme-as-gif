@@ -22,7 +22,7 @@ The Arkanoid GIF Generator is a web application that creates personalized Arkano
 
 To use the Arkanoid GIF Generator, simply access the website at:
 
-	https://arkanoid-github-readme.vercel.app/arkanoid
+	https://arkanoid-github-readme.vercel.app/api/arkanoid
 
 Once you are on the website, you will see a very basic black and white arkanoid game playing.
 After you have made your [customizations](#customization) copy the full URL and embed it as an image in your README.md like this:
@@ -53,7 +53,7 @@ The provided text will be overlaid on the Arkanoid gameplay.
 
 Example :
 
-	https://arkanoid-github-readme.vercel.app/arkanoid?name=enfyna&job=frontend%20developer&country=Turkey
+	https://arkanoid-github-readme.vercel.app/api/arkanoid?name=enfyna&job=frontend%20developer&country=Turkey
 
 - `name` : Your name.
 - `project` : The name of the project you are currently working on.
@@ -83,7 +83,7 @@ Colors are in hexadecimal.
 
 Example :
 
-	https://arkanoid-github-readme.vercel.app/arkanoid?bg_color=224488&ball_color=ffaa88
+	https://arkanoid-github-readme.vercel.app/api/arkanoid?bg_color=224488&ball_color=ffaa88
 
 - `bg_color` : Window background color. (default : 000000)
 - `font_color` : Window font color. (default : FFFFFF)
