@@ -1,9 +1,10 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template, send_from_directory
 from PIL import Image, ImageDraw, ImageFont
 
 from io import BytesIO
 from random import random
-from os.path import isfile
+from os import path
+import os
 # import cProfile
 
 app = Flask(__name__)
@@ -27,11 +28,11 @@ def draw_base_image(args) -> Image.Image:
 		icon_opacity = 0.5
 
 	right = 0
-	for i, key in enumerate(['icon','icon2','icon3']):
+	for i, key in enumerate(['icon1','icon2','icon3']):
 		right += 10
 		if key in arg_keys:
-			icon_path = f"api/icons/{args.get(key)}.png"
-			if not isfile(icon_path):
+			icon_path = f"api/static/image/icons/{args.get(key)}.png"
+			if not path.isfile(icon_path):
 				return Response("Icon file not found", status=404)
 
 			icon = Image.open(icon_path)
@@ -215,13 +216,13 @@ def dino():
 	bg_color = max(2, int(request.args.get('bg_color', '0x000000'),base=16))
 
 	# get dino and cactus, resize them
-	dino = Image.open('api/dino/dino_base.png')
-	dino_left = Image.open('api/dino/dino_left.png')
-	dino_right = Image.open('api/dino/dino_right.png')
-	cactus = Image.open('api/dino/cactus.png')
-	floor = Image.open('api/dino/floor.png')
+	dino = Image.open('api/static/image/dino/dino_base.png')
+	dino_left = Image.open('api/static/image/dino/dino_left.png')
+	dino_right = Image.open('api/static/image/dino/dino_right.png')
+	cactus = Image.open('api/static/image/dino/cactus.png')
+	floor = Image.open('api/static/image/dino/floor.png')
 	quarter_floor = floor.copy()
-	cloud = Image.open('api/dino/cloud.png')
+	cloud = Image.open('api/static/image/dino/cloud.png')
 	cloud_small = cloud.copy()
 
 	w, h = dino.size
@@ -324,7 +325,7 @@ def dino():
 		for i in range(-2,3):
 			frame.paste(cloud, (h_w + cloud.width + (i*q_w) - total_distance_travelled//2, height // 6), cloud)
 
-		if dino_pos_y == 0:
+		if dino_pos_y + dino.height <= height:
 			frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
 		else:
 			if total_distance_travelled % 60 < 30:
@@ -373,6 +374,32 @@ def dino():
 
 	return Response(buffer.getvalue(), mimetype="image/gif")
 
+icon_categories = {
+    'os': 'Operating Systems',
+    'browser': 'Browsers',
+    'ide&te': 'IDEs & Text Editors',
+	'lang': 'Programming Languages',
+	'libraries': 'Libraries & Frameworks',
+	'drawing': 'Digital Art & Design',
+	'vm': 'Virtual Machines',
+	'web': 'Web Sites',
+}
+
 @app.route('/')
 def index():
-	return "/api/base  <- copy this and paste it at the end of this URL. :)"
+    icon_folder = os.path.join(app.static_folder, 'image/icons')
+    icon_data = {}
+
+    for category, label in icon_categories.items():
+        category_icons = [filename.split('.')[0] for filename in os.listdir(os.path.join(icon_folder, category)) if filename.endswith('.png')]
+        icon_data[category] = {
+            'label': label,
+            'icons': category_icons,
+        }
+
+    return render_template('index.html.jinja', icon_data=icon_data)
+
+
+@app.route('/favicon.ico') 
+def favicon(): 
+    return send_from_directory(path.join(app.root_path, 'static/image'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')

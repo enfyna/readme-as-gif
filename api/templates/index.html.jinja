@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang=en data-bs-theme=dark>
+<head>
+	<meta charset=UTF-8>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="static/styles/bootstrap.css">
+	<script src="static/js/index.js"></script>
+	<title>Customize</title>
+</head>
+
+<body class="min-vh-100 bg-black container-fluid row">
+
+<div class="col-lg-6 d-flex align-items-center justify-content-center">
+
+<form id="baseForm" class="card bg-dark text-light p-3">
+	<h3>
+		Base Settings
+	</h3>
+	<div class="input-group mb-1">
+		<label for="width" class="input-group-text">Width</label>
+		<input type="number" class="form-control" id="width" name="width" value="800" max="1000" min="300">
+
+		<label for="height" class="input-group-text">Height</label>
+		<input type="number" id="height" name="height" value="200" class="form-control" max="1000" min="100">
+	</div>
+	<div class="input-group mb-1">
+		<label for="bg_color" class="input-group-text">Background Color</label>
+		<input type="color" id="bg_color" name="bg_color" value="#000000" class="form-control form-control-color">
+
+		<label for="font_color" class="input-group-text">Font Color</label>
+		<input type="color" id="font_color" name="font_color" value="#ffffff" class="form-control form-control-color">
+	</div>
+	<div class="input-group mb-1">
+		<label for="name" class="input-group-text">Name</label>
+		<input type="text" id="name" name="name" value="name" class="form-control">
+	</div>
+	<div class="input-group mb-1">
+		<label for="job" class="input-group-text">Job</label>
+		<input type="text" id="job" name="job" value="job" class="form-control">
+
+		<label for="country" class="input-group-text">Country</label>
+		<input type="text" id="country" name="country" value="country" class="form-control">
+	</div>
+	<div class="input-group mb-1">
+		<label for="project" class="input-group-text">Project</label>
+		<input type="text" id="project" name="project" value="project" class="form-control">
+	</div>
+	<div class="input-group mb-1">
+		<label for="learning" class="input-group-text">Learning</label>
+		<input type="text" id="learning" name="learning" value="learning" class="form-control">
+	</div>
+	<div class="input-group mb-1">
+		<label for="askme" class="input-group-text">Ask me</label>
+		<input type="text" id="askme" name="askme" value="askme" class="form-control">
+	</div>
+	<div class="input-group mb-1">
+		<label for="funfact" class="input-group-text">Fun Fact</label>
+		<input type="text" id="funfact" name="funfact" value="funfact" class="form-control">
+	</div>
+	<div class="input-group mb-1">
+		{% for i in range(1,4) %}
+		<label for="icon{{ i }}" class="input-group-text">Icon {{ i }}</label>
+		<select name="icon{{ i }}" id="icon{{ i }}" class="form-control">
+			<option value="">Empty</option>
+			{% for category, data in icon_data.items() %}
+			<optgroup label="{{ data['label'] }}" id="{{ category }}">
+				{% for icon in data['icons'] %}
+				<option value="{{ category }}/{{ icon }}">{{ icon.capitalize() }}</option>
+				{% endfor %}
+			</optgroup>
+			{% endfor %}
+		</select>
+		{% endfor %}
+	</div>
+	<div class="input-group mb-1">
+		<label for="icon_opacity" class="input-group-text">Icon Opacity</label>
+		<input type="range" id="icon_opacity" name="icon_opacity" value="1" class="form-control" min="0" max="1" step="0.01">
+	</div>
+
+	<button type="button" class="btn btn-primary" onclick="generateGif()">Generate</button>
+</form>
+
+</div>
+
+<div class="col-lg-6 d-flex align-items-center justify-content-center">
+	<!-- <div class="container-fluid row-cols-lg-6 d-flex align-items-center justify-content-center"> -->
+
+		<div class="col card bg-dark p-1">
+			<img id="gifImage" class="img-fluid rounded-1">
+		</div>
+		<!-- <div class="col card bg-dark p-1 text-center">
+			 
+		</div> -->
+	<!-- </div> -->
+</div>
+
+</body>
+</html>
