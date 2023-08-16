@@ -3,6 +3,8 @@ let base_form_data;
 let game_form_data = '';
 let selected_game = 'base';
 
+let fetching = false;
+
 const result = document.getElementById('result');
 
 window.addEventListener('DOMContentLoaded',()=>{
@@ -13,9 +15,10 @@ window.addEventListener('DOMContentLoaded',()=>{
 });
 
 function generate(){
-	if(current_form == null){
+	if(current_form == null || fetching){
 		return;
 	}
+	fetching = true;
 	if(selected_game == 'base'){
 		base_form_data = get_form_as_url_params(current_form);
 	}
@@ -28,10 +31,11 @@ function generate(){
 }
 
 function get_game_form() {
-	if(base_form_data == null || selected_game == 'base'){
+	if(base_form_data == null || selected_game != 'base'){
 		return;
 	}
 	current_form.hidden = true;
+	selected_game = get_selected_game(current_form);
 	current_form = document.getElementById(selected_game);
 	document.getElementById('generate_'+selected_game).onclick = generate;
 	current_form.hidden = false;
@@ -40,10 +44,11 @@ function get_game_form() {
 function fetchGIF(url){
 	const progress_bar = document.getElementById('progress')
 	progress_bar.style.width = '0%';
-	
+
 	let req = new XMLHttpRequest();
 	req.onreadystatechange = () => {
 		if(req.readyState == 4 && req.status == 200){
+			result.onload = () => {fetching = false}
 			result.src = req.responseURL;
 		}
 	}
@@ -66,7 +71,7 @@ function get_form_as_url_params(form) {
 			formData.set(key, rgb2bgr(formData.get(key).slice(1)));
 		}
 		else if(key == 'game'){
-			selected_game = val;
+			keysToDelete.push(key);
 		}
 		else if (val.trim().length === 0) {
 			keysToDelete.push(key);
@@ -76,6 +81,12 @@ function get_form_as_url_params(form) {
 	keysToDelete.forEach(key => formData.delete(key));
 
 	return new URLSearchParams(formData).toString();
+}
+
+function get_selected_game(form) {
+	const formData = new FormData(form);
+	console.log( formData.get('game'))
+	return formData.get('game');
 }
 
 function rgb2bgr(rgb){
