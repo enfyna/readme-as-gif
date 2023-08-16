@@ -9,6 +9,7 @@ const result = document.getElementById('result');
 
 window.addEventListener('DOMContentLoaded',()=>{
 	document.getElementById('generate').onclick = generate;
+	document.getElementById('download').onclick = download;
 	document.getElementById('next').onclick = get_game_form;
 
 	current_form = document.getElementById('baseForm');
@@ -38,6 +39,7 @@ function get_game_form() {
 	selected_game = get_selected_game(current_form);
 	current_form = document.getElementById(selected_game);
 	document.getElementById('generate_'+selected_game).onclick = generate;
+	document.getElementById('download_'+selected_game).onclick = download;
 	document.getElementById('cancel_'+selected_game).onclick = cancel;
 	current_form.hidden = false;
 }
@@ -96,6 +98,18 @@ function cancel(){
 	current_form = document.getElementById('baseForm');
 	document.getElementById('generate').onclick = generate;
 	current_form.hidden = false;
+}
+
+function download() {
+	if(result.src == null){
+		return;
+	}
+	const a = document.createElement('a')
+	a.href = result.src
+	a.download = result.src
+	document.body.appendChild(a)
+	a.click()
+	document.body.removeChild(a)
 }
 
 function rgb2bgr(rgb){
