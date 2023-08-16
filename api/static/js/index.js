@@ -38,6 +38,7 @@ function get_game_form() {
 	selected_game = get_selected_game(current_form);
 	current_form = document.getElementById(selected_game);
 	document.getElementById('generate_'+selected_game).onclick = generate;
+	document.getElementById('cancel_'+selected_game).onclick = cancel;
 	current_form.hidden = false;
 }
 
@@ -87,6 +88,14 @@ function get_selected_game(form) {
 	const formData = new FormData(form);
 	console.log( formData.get('game'))
 	return formData.get('game');
+}
+
+function cancel(){
+	current_form.hidden = true;
+	selected_game = 'base';
+	current_form = document.getElementById('baseForm');
+	document.getElementById('generate').onclick = generate;
+	current_form.hidden = false;
 }
 
 function rgb2bgr(rgb){
