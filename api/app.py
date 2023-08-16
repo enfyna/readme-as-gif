@@ -215,14 +215,33 @@ def dino():
 
 	bg_color = max(2, int(request.args.get('bg_color', '0x000000'),base=16))
 
+	obj_color = request.args.get('obj_color', 'ffff00')
+	obj_color = tuple(int(obj_color[i:i+2], 16) for i in (4, 2, 0))
+
 	# get dino and cactus, resize them
 	dino = Image.open('api/static/image/dino/dino_base.png')
 	dino_left = Image.open('api/static/image/dino/dino_left.png')
 	dino_right = Image.open('api/static/image/dino/dino_right.png')
 	cactus = Image.open('api/static/image/dino/cactus.png')
 	floor = Image.open('api/static/image/dino/floor.png')
-	quarter_floor = floor.copy()
+	floor = floor.convert('RGBA')
 	cloud = Image.open('api/static/image/dino/cloud.png')
+	cloud = cloud.convert('RGBA')
+
+	clr = (*obj_color, 255)
+	empty = (0,0,0,0)
+
+	for image in [dino, dino_left, dino_right, cactus, cloud, floor]:
+		img_data = image.getdata()
+		px = []
+		for i in img_data:
+			if i[3] > 0:
+				px.append(clr)
+			else:
+				px.append(empty)
+		image.putdata(px)
+
+	half_floor = floor.copy()
 	cloud_small = cloud.copy()
 
 	w, h = dino.size
@@ -241,7 +260,6 @@ def dino():
 	new_width = int(ratio * new_height)
 
 	cactus = cactus.resize((new_width, new_height))
-	cactus.convert('RGBA')
 
 	w, h = floor.size
 	ratio = w / h
@@ -250,9 +268,8 @@ def dino():
 	floor_num = width // floor.width + 1
 
 	floor = floor.resize((new_width, new_height))
-	quarter_floor = quarter_floor.crop((0,0,new_width//4,floor.height))
+	half_floor = half_floor.crop((0,0,new_width//2,floor.height))
 
-	floor = floor.convert('RGBA')
 	floor = Image.blend(floor, Image.new('RGBA', floor.size, bg_color), 0.3)
 
 	w, h = cloud.size
@@ -290,7 +307,8 @@ def dino():
 	y = height - cactus.height
 
 	cactusses = []
-	# second cactus makes things too complicated 
+	# second cactus makes things too complicated
+	# and dino needs to jump a lot so I dont think it looks good 
 	# add it later maybe
 	cactusses.append([h_w - c_dist_2, y])
 	# cactusses.append([h_w - c_dist_2 + c_dist_1, y])
@@ -316,14 +334,14 @@ def dino():
 		frame = img.copy()
 		draw = ImageDraw.Draw(frame)
 
-		for i in range(0,10):
-			frame.paste(floor, ((i*floor.width) - total_distance_travelled, height - floor.height // 2), floor)
-		for i in range(0,20):
-			frame.paste(quarter_floor, ((i*quarter_floor.width) - total_distance_travelled//2, height * 4 // 5), quarter_floor)
+		for i in range(-5,6):
+			frame.paste(floor, (h_w+ floor.width + (i*q_w) - total_distance_travelled//2, height - floor.height // 2), floor)
+		for i in range(-10,11):
+			frame.paste(half_floor, (h_w+ floor.width + (i*o_w)- total_distance_travelled//4, height * 4 // 5), half_floor)
 		for i in range(-4,5):
-			frame.paste(cloud_small, (h_w + cloud.width + (i*o_w) - total_distance_travelled//4, height // 8), cloud_small)
+			frame.paste(cloud_small, (h_w+ cloud.width + (i*o_w) - total_distance_travelled//4, height // 8), cloud_small)
 		for i in range(-2,3):
-			frame.paste(cloud, (h_w + cloud.width + (i*q_w) - total_distance_travelled//2, height // 6), cloud)
+			frame.paste(cloud, (h_w+ cloud.width + (i*q_w) - total_distance_travelled//2, height // 6), cloud)
 
 		if dino_pos_y + dino.height <= height:
 			frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
@@ -405,6 +423,6 @@ def index():
     return render_template('index.html.jinja', icon_data=icon_data, games=games)
 
 
-@app.route('/favicon.ico') 
-def favicon(): 
+@app.route('/favicon.ico')
+def favicon():
     return send_from_directory(path.join(app.root_path, 'static/image'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
