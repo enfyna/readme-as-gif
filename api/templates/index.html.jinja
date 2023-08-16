@@ -32,49 +32,49 @@
 		Base Settings
 	</h3>
 	<div class="input-group mb-1">
-		<label for="width" class="input-group-text">Width</label>
+		<label for="width" class="input-group-text" title="Adjust the width of the content. If the icons and text overlap you can try to increase this.">Width</label>
 		<input type="number" class="form-control" id="width" name="width" value="800" max="1000" min="300">
 
-		<label for="height" class="input-group-text">Height</label>
+		<label for="height" class="input-group-text" title="Adjust the height of the content. If some texts doesnt fit vertically you can try to increase this.">Height</label>
 		<input type="number" id="height" name="height" value="200" class="form-control" max="1000" min="100">
 	</div>
 	<div class="input-group mb-1">
-		<label for="bg_color" class="input-group-text">Background Color</label>
+		<label for="bg_color" class="input-group-text" title="Select the background color">Background Color</label>
 		<input type="color" id="bg_color" name="bg_color" value="#000000" class="form-control form-control-color">
 
-		<label for="font_color" class="input-group-text">Font Color</label>
+		<label for="font_color" class="input-group-text" title="Select the font color">Font Color</label>
 		<input type="color" id="font_color" name="font_color" value="#ffffff" class="form-control form-control-color">
 	</div>
 	<div class="input-group mb-1">
-		<label for="name" class="input-group-text">Name</label>
+		<label for="name" class="input-group-text" title="Enter your name">Name</label>
 		<input type="text" id="name" name="name" value="name" class="form-control">
 	</div>
 	<div class="input-group mb-1">
-		<label for="job" class="input-group-text">Job</label>
+		<label for="job" class="input-group-text" title="Enter your current job">Job</label>
 		<input type="text" id="job" name="job" value="job" class="form-control">
 
-		<label for="country" class="input-group-text">Country</label>
+		<label for="country" class="input-group-text" title="Enter your homeland">Country</label>
 		<input type="text" id="country" name="country" value="country" class="form-control">
 	</div>
 	<div class="input-group mb-1">
-		<label for="project" class="input-group-text">Project</label>
+		<label for="project" class="input-group-text" title="Write the project you are currently working on">Project</label>
 		<input type="text" id="project" name="project" value="project" class="form-control">
 	</div>
 	<div class="input-group mb-1">
-		<label for="learning" class="input-group-text">Learning</label>
+		<label for="learning" class="input-group-text" title="Write a subject that you are currently learning">Learning</label>
 		<input type="text" id="learning" name="learning" value="learning" class="form-control">
 	</div>
 	<div class="input-group mb-1">
-		<label for="askme" class="input-group-text">Ask me</label>
+		<label for="askme" class="input-group-text" title="Write a subject that you are confident in">Ask me</label>
 		<input type="text" id="askme" name="askme" value="askme" class="form-control">
 	</div>
 	<div class="input-group mb-1">
-		<label for="funfact" class="input-group-text">Fun Fact</label>
+		<label for="funfact" class="input-group-text" title="Share a fun fact">Fun Fact</label>
 		<input type="text" id="funfact" name="funfact" value="funfact" class="form-control">
 	</div>
 	<div class="input-group mb-1">
 		{% for i in range(1,4) %}
-		<label for="icon{{ i }}" class="input-group-text">Icon {{ i }}</label>
+		<label for="icon{{ i }}" class="input-group-text" title="Pick your most used technology icon. Icon1 will take full height, Icon2 and Icon3 will take half height.">Icon {{ i }}</label>
 		<select name="icon{{ i }}" id="icon{{ i }}" class="form-control">
 			<option value="">Empty</option>
 			{% for category, data in icon_data.items() %}
@@ -88,11 +88,11 @@
 		{% endfor %}
 	</div>
 	<div class="input-group mb-1">
-		<label for="icon_opacity" class="input-group-text">Icon Opacity</label>
+		<label for="icon_opacity" class="input-group-text" title="Change the opacity of the icons by dragging the range input left or right.">Icon Opacity</label>
 		<input type="range" id="icon_opacity" name="icon_opacity" value="1" class="form-control" min="0" max="1" step="0.01">
 	</div>
 	<div class="input-group mb-1">
-		<label for="game" class="input-group-text">Game</label>
+		<label for="game" class="input-group-text" title="Select the game that you want to overlay the image with. Game overlay will be created after you generated the image and pressed the next button.">Game</label>
 		<select name="game" id="game" class="form-control">
 			{% for game in games %}
 			<option value="{{ game }}">{{ game.capitalize() }}</option>

@@ -3,7 +3,7 @@
 		{{ game.capitalize() }} Settings
 	</h3>
     <div class="input-group mb-1">
-        <label for="delta" class="input-group-text">Delta</label>
+        <label for="delta" class="input-group-text" title="Milliseconds between frames. It is not recommended to use values lower than 20.">Delta</label>
         <input type="number" class="form-control" id="delta" name="delta" value="24" min="1">
     </div>
     {% include 'game_forms/' + game + '.html' %}
