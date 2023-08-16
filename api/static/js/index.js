@@ -50,9 +50,14 @@ function fetchGIF(url){
 
 	let req = new XMLHttpRequest();
 	req.onreadystatechange = () => {
-		if(req.readyState == 4 && req.status == 200){
-			result.onload = () => {fetching = false}
-			result.src = req.responseURL;
+		if(req.readyState == 4){
+			if(req.status == 200){
+				result.onload = () => {fetching = false}
+				result.src = req.responseURL;
+			}
+			else{
+				alert('There was a problem generating the GIF. Reload the page and try lowering the width and height.');
+			}
 		}
 	}
 	req.onprogress = (e) => {
