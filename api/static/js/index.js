@@ -1,24 +1,65 @@
+let current_form;
+let base_form_data;
+let game_form_data;
 
-function generateGif() {
-	const form = document.getElementById('baseForm');
-	const formData = new FormData(form);
+window.addEventListener('DOMContentLoaded',()=>{
+	document.getElementById('generate').onclick = generateBase;
+	document.getElementById('next').onclick = get_game_form;
 
-	formData.set('bg_color', rgb2bgr(formData.get('bg_color').slice(1)))
-	formData.set('font_color', rgb2bgr(formData.get('font_color').slice(1)))
+	current_form = document.getElementById('baseForm');
+});
 
-	const string_params = ['name','country','job','project','learning','askme','funfact','icon1','icon2','icon3']
 
-	for (const i in string_params) {
-		var value = (formData.get(string_params[i]) ?? '').trim();
-		if(value.length == 0){
-			formData.delete(string_params[i])
-		}
-		else{
-			formData.set(string_params[i], value)
-		}
+function generateBase() {
+	if(current_form == null){
+		return;
 	}
+	base_form_data = new FormData(current_form);
 
-	const url = '/api/base?' + new URLSearchParams(formData).toString();
+	const keysToDelete = [];
+
+	base_form_data.forEach((val, key) => {
+		if (key.endsWith('color')) {
+			base_form_data.set(key, rgb2bgr(base_form_data.get(key).slice(1)));
+		} else if (val.trim().length === 0) {
+			keysToDelete.push(key);
+		}
+	});
+
+	keysToDelete.forEach(key => base_form_data.delete(key));
+
+	const url = '/api/base?' + new URLSearchParams(base_form_data).toString();
+	const gifImage = document.getElementById('gifImage');
+	gifImage.src = url;
+}
+
+function get_game_form() {
+	if(base_form_data == null){
+		return;
+	}
+	current_form.hidden = true;
+	current_form = document.getElementById(base_form_data.get('game'));
+	document.getElementById('generate_'+base_form_data.get('game')).onclick = generateGame;
+	current_form.hidden = false;
+}
+
+function generateGame(){
+	game_form_data = new FormData(current_form);
+
+	const keysToDelete = [];
+
+	game_form_data.forEach((val, key)=>{
+		if(key.endsWith('color')){
+			game_form_data.set(key, rgb2bgr(game_form_data.get(key).slice(1)));
+		}
+		else if (val.trim().length === 0) {
+			keysToDelete.push(key);
+		}
+	});
+
+	keysToDelete.forEach(key => base_form_data.delete(key));
+
+	const url = '/api/' + base_form_data.get('game') + '?' + new URLSearchParams(game_form_data).toString() + '&' +new URLSearchParams(base_form_data).toString();
 	const gifImage = document.getElementById('gifImage');
 	gifImage.src = url;
 }

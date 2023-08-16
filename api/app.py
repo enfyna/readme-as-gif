@@ -374,6 +374,11 @@ def dino():
 
 	return Response(buffer.getvalue(), mimetype="image/gif")
 
+games = [
+	'arkanoid',
+	'dino',
+]
+
 icon_categories = {
     'os': 'Operating Systems',
     'browser': 'Browsers',
@@ -397,7 +402,7 @@ def index():
             'icons': category_icons,
         }
 
-    return render_template('index.html.jinja', icon_data=icon_data)
+    return render_template('index.html.jinja', icon_data=icon_data, games=games)
 
 
 @app.route('/favicon.ico') 
