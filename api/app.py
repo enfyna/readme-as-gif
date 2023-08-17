@@ -334,14 +334,14 @@ def dino():
 		frame = img.copy()
 		draw = ImageDraw.Draw(frame)
 
-		for i in range(-5,6):
-			frame.paste(floor, (h_w+ floor.width + (i*q_w) - total_distance_travelled//2, height - floor.height // 2), floor)
-		for i in range(-10,11):
-			frame.paste(half_floor, (h_w+ floor.width + (i*o_w)- total_distance_travelled//4, height * 4 // 5), half_floor)
-		for i in range(-4,5):
-			frame.paste(cloud_small, (h_w+ cloud.width + (i*o_w) - total_distance_travelled//4, height // 8), cloud_small)
-		for i in range(-2,3):
-			frame.paste(cloud, (h_w+ cloud.width + (i*q_w) - total_distance_travelled//2, height // 6), cloud)
+		for i in range(-5,10):
+			frame.paste(floor, (floor.width + (i*q_w) - total_distance_travelled//2, height - floor.height // 2), floor)
+		for i in range(-5,19):
+			frame.paste(half_floor, (half_floor.width + (i*o_w)- total_distance_travelled//4, height * 4 // 5), half_floor)
+		for i in range(-2,9):
+			frame.paste(cloud_small, (cloud_small.width + (i*o_w) - total_distance_travelled//4, height // 8), cloud_small)
+		for i in range(-2,6):
+			frame.paste(cloud, (cloud.width + (i*q_w) - total_distance_travelled//2, height // 6), cloud)
 
 		if dino_pos_y + dino.height <= height:
 			frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
