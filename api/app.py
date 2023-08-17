@@ -27,9 +27,8 @@ def draw_base_image(args) -> Image.Image:
 	else:
 		icon_opacity = 0.5
 
-	right = 0
+	right = 10
 	for i, key in enumerate(['icon1','icon2','icon3']):
-		right += 10
 		if key in arg_keys:
 			icon_path = f"api/static/image/icons/{args.get(key)}.png"
 			if not path.isfile(icon_path):
@@ -45,12 +44,21 @@ def draw_base_image(args) -> Image.Image:
 			i_w, i_h = icon.size
 			ratio = i_h / i_w
 			new_width = min(height - 20, width // 2 - 20) // min(2, i + 1)
-			new_height = int(ratio * new_width)
+			new_height = min(height - 20, int(ratio * new_width))
 
 			icon = icon.resize((new_width, new_height))
 
-			right += icon.width
-			img.paste(icon, (width-right, height-icon.height-10), icon)
+			top = 0
+			if icon.height < height - 20:
+				if i == 0:
+					top = height//2 - icon.height//2
+				else:
+					top = height - height //4 - icon.height // 2
+			else:
+				top = height - icon.height - 10
+
+			right += icon.width + 10
+			img.paste(icon, (width-right, top), icon)
 
 	# Create text
 	text = ""
