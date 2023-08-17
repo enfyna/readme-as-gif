@@ -8,12 +8,36 @@ let fetching = false;
 const result = document.getElementById('result');
 
 window.addEventListener('DOMContentLoaded',()=>{
-	document.getElementById('generate').onclick = generate;
-	document.getElementById('download').onclick = download;
-	document.getElementById('next').onclick = get_game_form;
-
 	current_form = document.getElementById('baseForm');
+
+	const btns = document.querySelectorAll('button')
+	btns.forEach(btn => {
+		btn.addEventListener('click', event => {
+			clicked(event.target)
+		})
+	})
 });
+
+function clicked(btn) {
+	switch (btn.id) {
+		case 'generate':
+		case 'generate_'.concat(selected_game):
+			generate();
+			break;
+		case 'download':
+		case 'download_'.concat(selected_game):
+			download();
+			break;
+		case 'next':
+			get_game_form();
+			break;
+		case 'cancel_'.concat(selected_game):
+			cancel();
+			break;
+		default:
+			break;
+	}
+}
 
 function generate(){
 	if(current_form == null || fetching){
@@ -38,24 +62,22 @@ function get_game_form() {
 	current_form.hidden = true;
 	selected_game = get_selected_game(current_form);
 	current_form = document.getElementById(selected_game);
-	document.getElementById('generate_'+selected_game).onclick = generate;
-	document.getElementById('download_'+selected_game).onclick = download;
-	document.getElementById('cancel_'+selected_game).onclick = cancel;
 	current_form.hidden = false;
 }
 
 function fetchGIF(url){
-	const progress_bar = document.getElementById('progress')
-	progress_bar.style.width = '0%';
+	const progress_bar = document.getElementById('progress');
+	progress_bar.style.width = '5%';
 
 	let req = new XMLHttpRequest();
 	req.onreadystatechange = () => {
 		if(req.readyState == 4){
 			if(req.status == 200){
-				result.onload = () => {fetching = false}
+				result.onload = () => {fetching = false;}
 				result.src = req.responseURL;
 			}
 			else{
+				fetching = false;
 				alert('There was a problem generating the GIF. Reload the page and try lowering the width and height.');
 			}
 		}
@@ -93,7 +115,6 @@ function get_form_as_url_params(form) {
 
 function get_selected_game(form) {
 	const formData = new FormData(form);
-	console.log( formData.get('game'))
 	return formData.get('game');
 }
 
@@ -109,17 +130,17 @@ function download() {
 	if(result.src == null){
 		return;
 	}
-	const a = document.createElement('a')
-	a.href = result.src
-	a.download = result.src
-	document.body.appendChild(a)
-	a.click()
-	document.body.removeChild(a)
+	const a = document.createElement('a');
+	a.href = result.src;
+	a.download = result.src;
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a);
 }
 
 function rgb2bgr(rgb){
-	const r = rgb.slice(0,2)
-	const g = rgb.slice(2,4)
-	const b = rgb.slice(4,6)
-	return b + g + r
+	const r = rgb.slice(0,2);
+	const g = rgb.slice(2,4);
+	const b = rgb.slice(4,6);
+	return b + g + r;
 }
