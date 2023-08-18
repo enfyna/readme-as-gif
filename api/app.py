@@ -1,10 +1,25 @@
-from flask import Flask, request, Response, render_template, send_from_directory
-from PIL import Image, ImageDraw, ImageFont
-
-from io import BytesIO
-from random import random
-from os import path
-import os
+from flask import (
+	Flask,
+	request,
+	Response,
+	render_template,
+	send_from_directory,
+)
+from PIL import (
+	Image,
+	ImageFont,
+	ImageDraw,
+)
+from os import (
+	path, 
+	listdir,
+)
+from io import (
+	BytesIO,
+)
+from random import (
+	random,
+)
 # import cProfile
 
 app = Flask(__name__)
@@ -418,11 +433,11 @@ icon_categories = {
 
 @app.route('/')
 def index():
-    icon_folder = os.path.join(app.static_folder, 'image/icons')
+    icon_folder = path.join(app.static_folder, 'image/icons')
     icon_data = {}
 
     for category, label in icon_categories.items():
-        category_icons = [filename.split('.')[0] for filename in os.listdir(os.path.join(icon_folder, category)) if filename.endswith('.png')]
+        category_icons = [filename.split('.')[0] for filename in listdir(path.join(icon_folder, category)) if filename.endswith('.png')]
         icon_data[category] = {
             'label': label,
             'icons': category_icons,
