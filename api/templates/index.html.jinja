@@ -73,6 +73,10 @@
 		<input type="text" id="funfact" name="funfact" value="funfact" class="form-control">
 	</div>
 	<div class="input-group mb-1">
+		<label for="custom" class="input-group-text" title="You can write any sentence you want">Custom</label>
+		<input type="text" id="custom" name="custom" class="form-control">
+	</div>
+	<div class="input-group mb-1">
 		{% for i in range(1,4) %}
 		<label for="icon{{ i }}" class="input-group-text" title="Pick your most used technology icon. Icon1 will take full height, Icon2 and Icon3 will take half height.">Icon {{ i }}</label>
 		<select name="icon{{ i }}" id="icon{{ i }}" class="form-control">

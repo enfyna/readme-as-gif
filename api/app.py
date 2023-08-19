@@ -11,7 +11,7 @@ from PIL import (
 	ImageDraw,
 )
 from os import (
-	path, 
+	path,
 	listdir,
 )
 from io import (
@@ -102,6 +102,10 @@ def draw_base_image(args) -> Image.Image:
 	if 'funfact' in arg_keys:
 		funfact = str(args.get('funfact'))
 		text = "\n".join((text, f"Fun fact {funfact}."))
+
+	if 'custom' in arg_keys:
+		custom = str(args.get('custom')).strip()
+		text = "\n".join((text, custom))
 
 	if len(text) > 0:
 		text = text.removeprefix("\n")
@@ -331,7 +335,7 @@ def dino():
 
 	cactusses = []
 	# second cactus makes things too complicated
-	# and dino needs to jump a lot so I dont think it looks good 
+	# and dino needs to jump a lot so I dont think it looks good
 	# add it later maybe
 	cactusses.append([h_w - c_dist_2, y])
 	# cactusses.append([h_w - c_dist_2 + c_dist_1, y])
