@@ -123,6 +123,7 @@ def base():
 	img.save(
 		buffer,
 		format="PNG",
+		optimize=True,
 	)
 
 	return Response(buffer.getvalue(), mimetype="image/png")
