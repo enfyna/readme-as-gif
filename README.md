@@ -1,138 +1,122 @@
 <h1 align="center">
-	Arkanoid GIF Generator
+	Readme As GIF
 </h1>
 
 <p align="center">
-	Get a dynamically generated Arkanoid game on your README!
+	Get a dynamically generated GIF with a game overlay on your README!
 </p>
 
 <p align="center">
-	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/18b304e9-fd04-47d0-8199-e079d393575e" />
+	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/0a2d4dde-f336-4a33-a8b5-2532222a7a95" />
+	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/b4062f8d-eddd-46c2-9a4c-e4b9483cb568" />
+	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/b2e73055-534d-405a-bc0a-7f7430d6d89d" />
+	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/b396e349-8a67-4a01-858f-34f5199082e7" />
 </p>
 
 <p align="center">
-
-The Arkanoid GIF Generator is a web application that creates personalized Arkanoid gameplay GIFs with customizable text. Users can specify some information about them through URL query parameters to generate personalized texts that appear alongside the Arkanoid game in the GIF.
+	Readme As GIF is a web application that creates personalized GIFs with a game overlay. Users can specify some information about them to generate personalized texts, select their most used technology icons and select the game that appear in the GIF.
+</p>
 
 <br>
 
 # Getting Started
 
-> ***Note*** : This method is very easy but every time you open your readme this API will generate a GIF from scratch so the response time is a bit slow and if you want do a lot of customizations the API response time will increase more. And vercel has limits so for example if you want a bigger window you could hit the limit. Because of this I recommend [building](#building) this repo on your computer and after you generated your GIF save it to your computer add it to your readme as a normal GIF.
+To use Readme As GIF, follow these simple steps:
 
-To use the Arkanoid GIF Generator, simply access the website at:
+1. **Access the Website:**
+   - Go to the Readme As GIF website at:
+     - [https://readme-as-gif.vercel.app/](https://readme-as-gif.vercel.app/)
 
-	https://arkanoid-github-readme.vercel.app/api/arkanoid
+2. **Base Image:**
+   - On the website, locate the form.
+   - Customize the form according to your preferences.
+   - Click the 'Generate' button to create the base image.
 
-Once you are on the website, you will see a very basic black and white arkanoid game playing.
-After you have made your [customizations](#customization) copy the full URL and embed it as an image in your README.md like this:
+3. **Game Selection:**
+   - Once the base image is generated, choose the desired game overlay.
+   - Click the 'Next' button to access game options.
 
-	<p align="center">
-		<img src="https://arkanoid-github-readme.vercel.app/arkanoid" />
-	</p>
+4. **Game Customization:**
+   - Fill in the relevant game options as before.
+   - Click 'Generate' to combine your selections.
 
-> Note : When you paste this pay attention to the colorization and spacing of your code to ensure the tags are colored. If the HTML tags are not colored correctly you need to adjust your spacing.
+5. **Outcome Evaluation:**
+   - If you're satisfied with the result, click 'Download' to obtain the GIF.
+   - If the outcome isn't what you wanted, don't worry! Just click 'Cancel' and modify the base image.
 
-<br>
+6. **Putting it in Your Readme:**
+   - Once the GIF file is downloaded, you can easily integrate it into your README by dragging and dropping.
 
-# Customization
+That's it! With these steps, you can effortlessly create customized GIFs tailored to your preferences. Enjoy the creative process!
 
-<p align="center">
-	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/0f39f4b5-b4d2-4450-bf9e-43df0e6c9d70" />
-</p>
-
-<p align="center">
-	<img src="https://github.com/enfyna/arkanoid-github-readme/assets/91965312/2125a0e2-6746-4fcb-b66c-29d2db68b4a6" />
-</p>
-You can create personalized Arkanoid GIFs by providing the query parameters in the URL.
-
-
-### Text Customizations
-
-The provided text will be overlaid on the Arkanoid gameplay.
-
-Example :
-
-	https://arkanoid-github-readme.vercel.app/api/arkanoid?name=enfyna&job=frontend%20developer&country=Turkey
-
-- `name` : Your name.
-- `project` : The name of the project you are currently working on.
-- `learning` : The subject or skill you are currently learning.
-- `askme` : The subject or skill you are confident in.
-- `funfact` : A short fun fact that you know.
-- `country` : Your homeland. (To use this you have to set `job`)
-- `job` : Your current job. (To use this you have to set `country`)
-
-
-### Window Customizations
-
-- `width` : Window width in px. (default : 600)
-- `height` : Window height in px. (default : 190)
-
-Note : The response time will slow down if you give too high values to the width and height.
-
-Note : If you give a too low value for the height the ball may not make a correct loop.
-
-- `delta` : Duration between frames in ms. (default : 24)
-
-Note : If you try to use a too low value the result may become laggy.
-
-### Color Customizations
-
-Colors are in hexadecimal.
-
-Example :
-
-	https://arkanoid-github-readme.vercel.app/api/arkanoid?bg_color=224488&ball_color=ffaa88
-
-- `bg_color` : Window background color. (default : 000000)
-- `font_color` : Window font color. (default : FFFFFF)
-- `paddle_color` : Paddle color. (default : FFFFFF)
-- `ball_color` : Ball color. (default : FFFFFF)
-
-### Game Customizations
-
-Some parameters to customize the game. Changing these could change the response time a lot.  
-
-- `ball_size` : Ball size in px. Increasing this will reduce the response time. (default : 15)
-- `speed` : Ball speed in px/frame. Increasing this will reduce the response time. (default : 7)
-- `jump` : Ball jump count. Decreasing this will reduce the response time. (default : 3)
+> [!NOTE]  
+> If you're aiming to generate high-resolution GIFs or GIFs with longer durations, you might encounter limitations on Vercel's platform. In such cases, I recommend building this repository locally to overcome these limits.
 
 
 <br>
 
-# Building
+## Building the Project
 
-1. Clone this repo to your computer. You can use github CLI or just download it as a zip.
+Follow these steps to set up and build the Readme As GIF project on your local machine:
 
-2. If you used CLI 'cd' to the destination folder. If you downloaded it as a zip extract it in a folder and open the folder that you extracted to and with right click select "open terminal here". 
+1. **Clone the Repository:**
+   - Clone this repository to your computer using GitHub CLI or download it as a ZIP archive.
 
-3. Create python virtual environment:
+2. **Navigate to the Project Directory:**
+   - Depending on your operating system:
+     - On Linux: Open the terminal application and use the `cd` command to navigate to the destination folder.
+       ```
+       cd path/to/destination_folder
+       ```
+     - On Windows:
+       - Press `Windows + R`, type `cmd`, and press Enter.
+       - Use the `cd` command to navigate to the folder where you extracted the project. For example:
+         ```
+         cd path\to\destination_folder
+         ```
 
-		python -m venv venv
+3. **Create a Python Virtual Environment:**
+   - Set up a Python virtual environment using the following command:
+     ```
+     python -m venv venv
+     ```
 
-4. Activate python venv by sourcing it:
+4. **Activate the Python Virtual Environment:**
+   - Activate the Python virtual environment:
+     - On Linux:
+       ```
+       source venv/bin/activate
+       ```
+     - On Windows:
+       ```
+       venv\Scripts\activate
+       ```
 
-		. venv/bin/activate
+5. **Install Project Requirements:**
+   - Install the required dependencies using pip and the provided `requirements.txt` file:
+     ```
+     pip install -r requirements.txt
+     ```
 
-> Note : On windows it should be : venv\bin\activate.bat
+6. **Set Flask App Location:**
+   - Export the location of `app.py` for Flask:
+     ```
+     export FLASK_APP=api/app.py
+     ```
 
-5. Install requirements:
+7. **Run the Application:**
+   - Launch the application using the Flask development server:
+     ```
+     flask run
+     ```
 
-		pip install -r requirements.txt
+8. **Access the Application:**
+   - Open your web browser and enter the following URL:
+     ```
+     http://127.0.0.1:5000/
+     ```
 
-6. Export app.py location for flask:
-
-		export FLASK_APP=api/app.py
-
-7. Run it : 
-
-		flask run
-
-8. Open your browser and enter this URL:
-
-		http://127.0.0.1:5000/arkanoid
-
+<br>
 
 # Contributing
 
@@ -140,12 +124,10 @@ If you find any bugs, have suggestions for improvements, or want to add new feat
 
 Before making significant changes, please discuss them to ensure they align with the project's goals and direction.
 
-
 <br>
-
 
 # License
 
-The Arkanoid GIF Generator is released under the MIT License. You are free to use, modify, and distribute the code as per the terms of the license.
+The Readme As GIF is released under the MIT License. You are free to use, modify, and distribute the code as per the terms of the license.
 
 </p>
