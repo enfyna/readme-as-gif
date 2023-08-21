@@ -7,9 +7,10 @@
 </p>
 
 <p align="center">
+	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/82c033c9-7c08-4019-9b29-6e05c90beef9" />
 	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/0a2d4dde-f336-4a33-a8b5-2532222a7a95" />
 	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/b4062f8d-eddd-46c2-9a4c-e4b9483cb568" />
-	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/b2e73055-534d-405a-bc0a-7f7430d6d89d" />
+	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/21619d32-9a65-4972-86e3-9639231e01f5" />
 	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/b396e349-8a67-4a01-858f-34f5199082e7" />
 </p>
 
