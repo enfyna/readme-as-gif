@@ -42,7 +42,7 @@ def draw_base_image(args) -> Image.Image:
 	else:
 		icon_opacity = 0.5
 
-	right = 10
+	right = 0
 	for i, key in enumerate(['icon1','icon2','icon3']):
 		if key in arg_keys:
 			icon_path = f"api/static/image/icons/{args.get(key)}.png"
