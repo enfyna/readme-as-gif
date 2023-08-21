@@ -431,6 +431,7 @@ icon_categories = {
     'ide&te': 'IDEs & Text Editors',
 	'lang': 'Programming Languages',
 	'libraries': 'Libraries & Frameworks',
+	'db':'Databases',
 	'drawing': 'Digital Art & Design',
 	'vm': 'Virtual Machines',
 	'web': 'Web Sites',
