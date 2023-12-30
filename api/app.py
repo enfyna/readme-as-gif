@@ -371,7 +371,7 @@ def dino():
 		for i in range(-2,6):
 			frame.paste(cloud, (cloud.width + (i*q_w) - total_distance_travelled//2, height // 6), cloud)
 
-		if dino_pos_y + dino.height <= height:
+		if dino_pos_y + dino.height < height:
 			frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
 		else:
 			if total_distance_travelled % 60 < 30:
@@ -401,8 +401,10 @@ def dino():
 
 		if dino_pos_y + dino.height >= height:
 			dino_v_speed_current = 0
+			dino_pos_y = height - dino.height
 		elif dino_pos_y + dino_v_speed_current <= dino_start_y:
 			dino_v_speed_current = 0
+			dino_pos_y = dino_start_y
 
 		total_distance_travelled += speed
 
