@@ -437,6 +437,7 @@ icon_categories = {
 	'drawing': 'Digital Art & Design',
 	'vm': 'Virtual Machines',
 	'web': 'Web Sites',
+	'ge': 'Game Engines'
 }
 
 @app.route('/')
