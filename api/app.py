@@ -41,36 +41,45 @@ def draw_base_image(args : dict) -> Image.Image | Response:
 
     right_dist = 0
     for i, key in enumerate(['icon1','icon2','icon3']):
-        if key in arg_keys:
-            icon_path = f"api/static/image/icons/{args.get(key)}.png"
-            if not path.isfile(icon_path):
-                return Response("Icon file not found", status=404)
+        if not key in arg_keys:
+            continue
 
-            icon = Image.open(icon_path)
+        icon_path = f"api/static/image/icons/{args.get(key)}.png"
+        if not path.isfile(icon_path):
+            return Response("Icon file not found", status=404)
 
-            if icon.mode != 'RGBA':
-                icon = icon.convert('RGBA')
+        icon = Image.open(icon_path)
 
-            icon = Image.blend(icon, Image.new('RGBA', icon.size, bg_color), 1 - icon_opacity)
+        if icon.mode != 'RGBA':
+            icon = icon.convert('RGBA')
 
-            i_w, i_h = icon.size
-            ratio = i_h / i_w
-            new_width = min(height - 20, width // 2 - 20) // min(2, i + 1)
-            new_height = min(height - 20, int(ratio * new_width))
+        icon = Image.blend(
+                icon, 
+                Image.new('RGBA', icon.size, bg_color),
+                1 - icon_opacity
+                )
 
-            icon = icon.resize((new_width, new_height))
+        i_w, i_h = icon.size
+        ratio = i_h / i_w
+        new_width = min(height - 20, width // 2 - 20) // min(2, i + 1)
+        new_height = min(height - 20, int(ratio * new_width))
 
-            top = 0
-            if icon.height < height - 20:
-                if i == 0:
-                    top = height//2 - icon.height//2
-                else:
-                    top = height - height //4 - icon.height // 2
-            else:
-                top = height - icon.height - 10
+        icon = icon.resize((new_width, new_height))
 
-            right_dist += icon.width + 10
-            img.paste(icon, (width-right_dist, top), icon)
+        top = 0
+        if icon.height > height - 20:
+            top = height - icon.height - 10
+        elif i == 0:
+            top = height//2 - icon.height//2
+        else:
+            top = height - height //4 - icon.height // 2
+
+        right_dist += icon.width + 10
+        img.paste(
+            icon, 
+            (width - right_dist, top),
+            icon
+        )
 
     # Create text
     text = ""
