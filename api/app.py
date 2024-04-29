@@ -19,14 +19,14 @@ from io import (
 )
 from random import (
     random,
+    randint,
 )
-# import cProfile
 
 app = Flask(__name__)
 
 fnt = ImageFont.truetype("api/font/ModernDOS8x16.ttf", 24)
 
-def draw_base_image(args : dict) -> Image.Image | Response:
+def draw_base_image(args : dict):
     width = int(args.get('width', 600))
     height = int(args.get('height', 190))
 
@@ -54,10 +54,10 @@ def draw_base_image(args : dict) -> Image.Image | Response:
             icon = icon.convert('RGBA')
 
         icon = Image.blend(
-                icon, 
-                Image.new('RGBA', icon.size, bg_color),
-                1 - icon_opacity
-                )
+            icon, 
+            Image.new('RGBA', icon.size, bg_color),
+            1 - icon_opacity
+        )
 
         i_w, i_h = icon.size
         ratio = i_h / i_w
@@ -81,7 +81,6 @@ def draw_base_image(args : dict) -> Image.Image | Response:
             icon
         )
 
-    # Create text
     text = ""
 
     if 'name' in arg_keys:
@@ -116,7 +115,13 @@ def draw_base_image(args : dict) -> Image.Image | Response:
     if len(text) > 0:
         text = text.removeprefix("\n")
 
-        ImageDraw.Draw(img).text((10,10),text,font_color,fnt,spacing=10)
+        ImageDraw.Draw(img).text(
+            (10,10),
+            text,
+            font_color,
+            fnt,
+            spacing=10
+        )
 
     return img
 
@@ -138,8 +143,6 @@ def base():
 
 @app.route('/api/arkanoid', methods=['GET'])
 def arkanoid():
-    # pr = cProfile.Profile()
-    # pr.enable()
 
     width = int(request.args.get('width', 600))
     height = int(request.args.get('height', 190))
@@ -160,33 +163,25 @@ def arkanoid():
 
     floor_height = height - (paddle_width * 3 / 2)
 
- # Ball Properties
+    # Ball Properties
     ball_size = min(floor_height-10, max(5, int(request.args.get('ball_size', 15))))
     ball_pos_x = (width + random() * width) / 3
     ball_pos_y = floor_height - ball_size
 
     ball_start_pos_x = ball_pos_x
-    ball_start_pos_y = ball_pos_y
 
     ball_speed = max(1,int(request.args.get('speed', 7)))
 
     ball_v_speed = -ball_speed
-    ball_h_speed = ball_speed if random() < 0.5 else -ball_speed
-
-    ball_start_direction = 1 if ball_h_speed > 0 else -1
+    ball_h_speed = ball_speed if randint(0, 1) else -ball_speed
 
     # Loop
     jump_count = max(1,int(request.args.get('jump', 3)))
     current_jump_count = 0
 
-    end_loop = False
-
     frames = []
 
-    while True:
-
-        if end_loop:
-            break
+    while current_jump_count < jump_count:
 
         frame = img.copy()
         draw = ImageDraw.Draw(frame)
@@ -194,7 +189,7 @@ def arkanoid():
         draw.ellipse((ball_pos_x, ball_pos_y, ball_pos_x+ball_size, ball_pos_y+ball_size),ball_color)
 
         paddle_start = (2 * ball_pos_x + ball_size - paddle_length) / 2
-        paddle_start = min(width-paddle_length, max(0, paddle_start))
+        paddle_start = max(min(width - paddle_length, paddle_start), 0)
         draw.line((paddle_start, height-paddle_width, paddle_start+paddle_length, height-paddle_width),paddle_color,paddle_width)
 
         frames.append(frame)
@@ -216,8 +211,6 @@ def arkanoid():
                 # Make sure the ball always gets to the starting point on last jump
                 ball_h_speed = (ball_start_pos_x - ball_pos_x) / ((floor_height-ball_size) * 2 / abs(ball_v_speed))
 
-            elif current_jump_count == jump_count:
-                end_loop = True
 
         ball_pos_x += ball_h_speed
         if ball_pos_x + ball_h_speed < 0 or ball_pos_x + ball_h_speed > width - ball_size:
@@ -234,11 +227,6 @@ def arkanoid():
         duration=delta,
         loop=0, # infinite loop
     )
-
-    # print("new bench.dmp dropped")
-    # pr.disable()
-    # pr.dump_stats("bench.dmp")
-
     return Response(buffer.getvalue(), mimetype="image/gif")
 
 @app.route('/api/dino', methods=['GET'])
@@ -255,30 +243,26 @@ def dino():
 
     bg_color = max(2, int(request.args.get('bg_color', '0x000000'),base=16))
 
-    obj_color = request.args.get('obj_color', 'ffff00')
-    obj_color = tuple(int(obj_color[i:i+2], 16) for i in (4, 2, 0))
+    sp_color = (
+        *(int(request.args.get('obj_color', '000000')[i:i+2], 16) for i in (4, 2, 0)),
+        255 #alpha
+    )
 
-    # get dino and cactus, resize them
     dino = Image.open('api/static/image/dino/dino_base.png')
     dino_left = Image.open('api/static/image/dino/dino_left.png')
     dino_right = Image.open('api/static/image/dino/dino_right.png')
     cactus = Image.open('api/static/image/dino/cactus.png')
-    floor = Image.open('api/static/image/dino/floor.png')
-    floor = floor.convert('RGBA')
-    cloud = Image.open('api/static/image/dino/cloud.png')
-    cloud = cloud.convert('RGBA')
+    floor = Image.open('api/static/image/dino/floor.png').convert('RGBA')
+    cloud = Image.open('api/static/image/dino/cloud.png').convert('RGBA')
 
-    clr = (*obj_color, 255)
-    empty = (0,0,0,0)
-
-    for image in [dino, dino_left, dino_right, cactus, cloud, floor]:
+    for image in (dino, dino_left, dino_right, cactus, cloud, floor):
         img_data = image.getdata()
         px = []
         for i in img_data:
             if i[3] > 0:
-                px.append(clr)
+                px.append(sp_color)
             else:
-                px.append(empty)
+                px.append((0,0,0,0))
         image.putdata(px)
 
     half_floor = floor.copy()
@@ -305,12 +289,11 @@ def dino():
     ratio = w / h
     new_height = dino.height // 2
     new_width = int(ratio * new_height)
-    floor_num = width // floor.width + 1
 
     floor = floor.resize((new_width, new_height))
     half_floor = half_floor.crop((0,0,new_width//2,floor.height))
 
-    floor = Image.blend(floor, Image.new('RGBA', floor.size, bg_color), 0.3)
+    half_floor = Image.blend(half_floor, Image.new('RGBA', half_floor.size, bg_color), 0.3)
 
     w, h = cloud.size
     ratio = w / h
@@ -364,50 +347,56 @@ def dino():
     # loop variables
     frames = []
     total_distance_travelled = 0
-    end_loop = False
 
-    while True:
-
-        if end_loop:
-            break
-
+    duration = (c_dist_2) // speed
+    
+    for _ in range(duration):
         frame = img.copy()
-        draw = ImageDraw.Draw(frame)
 
         for i in range(-5,10):
-            frame.paste(floor, (floor.width + (i*q_w) - total_distance_travelled//2, height - floor.height // 2), floor)
+            frame.paste(
+                floor,
+                (floor.width + (i*o_w) - total_distance_travelled//2, height - floor.height // 2),
+                floor
+            )
         for i in range(-5,19):
-            frame.paste(half_floor, (half_floor.width + (i*o_w)- total_distance_travelled//4, height * 4 // 5), half_floor)
+            frame.paste(
+                half_floor,
+                (half_floor.width + (i*o_w) - total_distance_travelled//4, height * 4 // 5),
+                half_floor
+            )
         for i in range(-2,9):
-            frame.paste(cloud_small, (cloud_small.width + (i*o_w) - total_distance_travelled//4, height // 8), cloud_small)
+            frame.paste(
+                cloud_small,
+                (cloud_small.width + (i*o_w) - total_distance_travelled//4, height // 8),
+                cloud_small
+            )
         for i in range(-2,6):
-            frame.paste(cloud, (cloud.width + (i*q_w) - total_distance_travelled//2, height // 6), cloud)
+            frame.paste(
+                cloud,
+                (cloud.width + (i*q_w) - total_distance_travelled//2, height // 6),
+                cloud
+            )
 
         if dino_pos_y + dino.height < height:
             frame.paste(dino, (dino_pos_x, dino_pos_y), dino)
+        elif total_distance_travelled % 70 < 35:
+            frame.paste(dino_left, (dino_pos_x, dino_pos_y), dino_left)
         else:
-            if total_distance_travelled % 60 < 30:
-                frame.paste(dino_left, (dino_pos_x, dino_pos_y), dino_left)
-            else:
-                frame.paste(dino_right, (dino_pos_x, dino_pos_y), dino_right)
+            frame.paste(dino_right, (dino_pos_x, dino_pos_y), dino_right)
 
         next_cactus_found = False
         for c in cactusses:
             frame.paste(cactus, (int(c[0]), int(c[1])), cactus)
             c[0] -= speed
+            if next_cactus_found:
+                continue
+            if c[0] < dino_pos_x:
+                continue
             if dino_v_speed_current == 0 and dino_pos_y != dino_start_y:
-                if next_cactus_found:
-                    continue
-                if c[0] < dino_pos_x:
-                    continue
                 next_cactus_found = True
                 if dino_pos_x + dino.width + total_frames_to_climb_cactus > c[0]:
                     dino_v_speed_current = -dino_v_speed
-
-        frames.append(frame)
-
-        if total_distance_travelled + speed == c_dist_2:
-            end_loop = True
 
         dino_pos_y += dino_v_speed_current
 
@@ -419,6 +408,7 @@ def dino():
             dino_pos_y = dino_start_y
 
         total_distance_travelled += speed
+        frames.append(frame)
 
 
     buffer = BytesIO()
