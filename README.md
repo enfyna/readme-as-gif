@@ -2,9 +2,18 @@
 	Readme As GIF
 </h1>
 
+<p align=center>
+	<img src="https://img.shields.io/badge/pillow-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54">
+	<img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white">
+	<img src="https://img.shields.io/badge/jinja-white.svg?style=for-the-badge&logo=jinja&logoColor=black">
+	<img src="https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white">
+</p>
+
+<br>
 <p align="center">
 	Get a dynamically generated GIF with a game overlay on your README!
 </p>
+<br><br>
 
 <p align="center">
 	<img src="https://github.com/enfyna/readme-as-gif/assets/91965312/82c033c9-7c08-4019-9b29-6e05c90beef9" />
